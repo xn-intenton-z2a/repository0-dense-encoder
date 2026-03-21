@@ -45,7 +45,7 @@ describe("Encoders round-trip and metadata", () => {
   });
 
   test("defineEncoding creates a usable custom encoding", () => {
-    defineEncoding('bin2', '01');
+    defineEncoding('bin2', 'ab');
     const v = new Uint8Array([0,1,2,3,4,5]);
     const s = encode(v, 'bin2');
     const out = decode(s, 'bin2');
