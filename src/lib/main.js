@@ -27,6 +27,41 @@ export function getIdentity() {
   return { name, version, description };
 }
 
+// Hamming distance for strings: compare Unicode code points (Array.from handles code points)
+export function hammingString(a, b) {
+  if (typeof a !== 'string' || typeof b !== 'string') {
+    throw new TypeError('hammingString expects two strings');
+  }
+  const arrA = Array.from(a);
+  const arrB = Array.from(b);
+  if (arrA.length !== arrB.length) {
+    throw new RangeError('Strings must have equal length (in code points)');
+  }
+  let dist = 0;
+  for (let i = 0; i < arrA.length; i++) {
+    if (arrA[i] !== arrB[i]) dist++;
+  }
+  return dist;
+}
+
+// Hamming distance for non-negative integers: count differing bits
+export function hammingInt(a, b) {
+  if (!Number.isInteger(a) || !Number.isInteger(b)) {
+    throw new TypeError('hammingInt expects two integers');
+  }
+  if (a < 0 || b < 0) {
+    throw new RangeError('hammingInt expects non-negative integers');
+  }
+  let x = a ^ b;
+  // Brian Kernighan's bit count
+  let count = 0;
+  while (x !== 0) {
+    count++;
+    x &= x - 1;
+  }
+  return count;
+}
+
 export function main(args) {
   if (args?.includes("--version")) {
     console.log(version);
