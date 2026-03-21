@@ -10,15 +10,23 @@ export function getIdentity() {
   return { name, version, description };
 }
 
-export function defineEncoding(name, charset) {
+export function defineEncoding(name, charset, options = {}) {
   if (typeof name !== "string" || !name) throw new TypeError("encoding name must be a non-empty string");
   if (typeof charset !== "string" || charset.length < 2) throw new TypeError("charset must be a string with at least 2 characters");
-  // ensure unique characters
+
+  const allowAmbiguous = !!options.allowAmbiguous;
+  const ambiguous = new Set(['0','O','1','l','I']);
+
+  // ensure unique characters and sanitize charset: printable ASCII 33..126
   const seen = new Set();
   for (const ch of charset) {
     if (seen.has(ch)) throw new Error("charset contains duplicate characters");
+    const code = ch.charCodeAt(0);
+    if (code < 33 || code > 126) throw new Error("charset contains non-printable or out-of-range ASCII characters");
+    if (!allowAmbiguous && ambiguous.has(ch)) throw new Error("charset contains visually ambiguous characters (0/O,1/l/I)");
     seen.add(ch);
   }
+
   const charsetSize = charset.length;
   const bitsPerChar = Math.log2(charsetSize);
   const index = new Map();
