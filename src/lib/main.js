@@ -27,44 +27,6 @@ export function getIdentity() {
   return { name, version, description };
 }
 
-/**
- * Return FizzBuzz string for a single positive integer.
- * Throws TypeError for non-integers and RangeError for non-positive integers.
- */
-export function fizzBuzzSingle(n) {
-  if (typeof n !== "number" || !Number.isInteger(n)) {
-    throw new TypeError("n must be an integer");
-  }
-  if (n <= 0) {
-    throw new RangeError("n must be a positive integer");
-  }
-  if (n % 15 === 0) return "FizzBuzz";
-  if (n % 3 === 0) return "Fizz";
-  if (n % 5 === 0) return "Buzz";
-  return String(n);
-}
-
-/**
- * Return an array of FizzBuzz strings from 1..n inclusive.
- * - fizzBuzz(0) -> []
- * - negative -> RangeError
- * - non-integer -> TypeError
- */
-export function fizzBuzz(n) {
-  if (typeof n !== "number" || !Number.isInteger(n)) {
-    throw new TypeError("n must be an integer");
-  }
-  if (n < 0) {
-    throw new RangeError("n must be a non-negative integer");
-  }
-  if (n === 0) return [];
-  const out = [];
-  for (let i = 1; i <= n; i++) {
-    out.push(fizzBuzzSingle(i));
-  }
-  return out;
-}
-
 export function main(args) {
   if (args?.includes("--version")) {
     console.log(version);
