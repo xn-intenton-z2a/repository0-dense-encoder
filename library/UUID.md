@@ -31,21 +31,25 @@ SUPPLEMENTARY DETAILS:
 - Version check: the 4 most significant bits of byte 6 (bytes[6] >> 4) indicate the UUID version (1..5, or 7 for v7), if version validation is required check these bits after parsing.
 - Endianness caution: do not reorder bytes for platform-specific structures; prefer parsing hex pairs for deterministic behavior.
 
-REFERENCE DETAILS (implementable signatures):
-- encodeUUID(uuidString: string, encodingName: string): string
-  - Input: canonical UUID string (8-4-4-4-12).
-  - Output: encoded shorthand string (the mission requires reversing the encoded output as final step).
-  - Implementation outline: remove hyphens -> parse to Uint8Array(16) -> encoded = encode(bytes, encodingName) -> return reverse(encoded).
+UUIDv7 (notes):
 
-- decodeUUID(encodedString: string, encodingName: string): string
-  - Input: encoded shorthand string produced by encodeUUID.
-  - Output: canonical UUID string.
-  - Implementation outline: rev = reverse(encodedString) -> bytes = decode(rev, encodingName) -> hex32 = concat for each byte: hexPad(bytes[i]) -> insert hyphens at 8,12,16,20 -> return canonical string.
+TABLE OF CONTENTS:
+- Version 7 overview
+- Version bit position and check
+- Integration with shorthand encoding
 
-DIGEST:
-- Source: https://www.rfc-editor.org/rfc/rfc4122.html
+NORMALISED EXTRACT:
+- UUID version is encoded in the 4 most significant bits of byte 6 (zero-indexed); value 7 indicates UUIDv7.
+- UUIDv7 is a time-ordered UUID variant that embeds a Unix epoch-based timestamp and additional bits for randomness/sequence; exact field widths and byte layout are implementation-specific in draft proposals—consult canonical sources for precise layout.
+- For the library's UUID shorthand: accept canonical UUID strings for any version (including v7), parse to 16 bytes, then encode per configured encoding and apply the mission-reversed output.
+
+SUPPLEMENTARY DETAILS:
+- When version==7 implementers must validate that timestamp fields are parsed and encoded correctly if performing version-specific operations (sorting by timestamp, etc.).
+
+REFERENCE DETAILS:
+- Source: https://github.com/uuid6/uuid7 (implementation examples)
 - Retrieved: 2026-03-21
-- Bytes fetched during crawl: 81507
+- Bytes fetched during crawl: unknown
 
 ATTRIBUTION:
-RFC 4122 (P. Leach et al.)
+UUIDv7 repository and draft materials
