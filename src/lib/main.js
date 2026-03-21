@@ -39,6 +39,41 @@ export function main(args) {
   console.log(`${name}@${version}`);
 }
 
+// Hamming distance for Unicode-aware strings (code points)
+export function hammingString(a, b) {
+  if (typeof a !== "string" || typeof b !== "string") {
+    throw new TypeError("hammingString: arguments must be strings");
+  }
+  const aPts = Array.from(a);
+  const bPts = Array.from(b);
+  if (aPts.length !== bPts.length) {
+    throw new RangeError("hammingString: strings must have equal length (in code points)");
+  }
+  let diff = 0;
+  for (let i = 0; i < aPts.length; i++) {
+    if (aPts[i] !== bPts[i]) diff++;
+  }
+  return diff;
+}
+
+// Hamming distance for non-negative integers (bitwise)
+export function hammingInt(a, b) {
+  if (!Number.isInteger(a) || !Number.isInteger(b)) {
+    throw new TypeError("hammingInt: arguments must be integers");
+  }
+  if (a < 0 || b < 0) {
+    throw new RangeError("hammingInt: arguments must be non-negative");
+  }
+  // XOR and count set bits
+  let x = a ^ b;
+  let count = 0;
+  while (x) {
+    x &= x - 1; // clear lowest set bit
+    count++;
+  }
+  return count;
+}
+
 if (isNode) {
   const { fileURLToPath } = await import("url");
   if (process.argv[1] === fileURLToPath(import.meta.url)) {
