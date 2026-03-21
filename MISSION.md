@@ -36,5 +36,5 @@ The library should implement progressively denser encodings:
 - [x] UUID encoding shorter than base64 (< 22 chars) for the densest encoding
 - [x] Listing encodings returns encoding metadata (name, bits/char, charset size)
 - [x] Custom encoding can be created from a charset string
-- [ ] All unit tests pass
-- [ ] README shows UUID encoding comparison table
+- [x] All unit tests pass
+- [x] README shows UUID encoding comparison table
