@@ -6,7 +6,7 @@ Compute the Hamming distance between two strings of equal length using Unicode c
 
 Behaviour
 
-- Export a named function stringHamming(a, b) from src/lib/main.js (or the library entry point).
+- Export a named function hammingString(a, b) from src/lib/main.js (or the library entry point).
 - Accept only string arguments; if either argument is not a string, throw TypeError.
 - If the strings are of different length (in code points), throw RangeError.
 - Distance is the count of positions where corresponding Unicode code points differ.
@@ -14,7 +14,7 @@ Behaviour
 
 API
 
-- stringHamming(a: string, b: string) -> number
+- hammingString(a: string, b: string) -> number
   - Throws TypeError for non-strings.
   - Throws RangeError for unequal-length strings (measured in code points).
 

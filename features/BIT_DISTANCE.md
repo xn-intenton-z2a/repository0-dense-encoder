@@ -6,7 +6,7 @@ Compute the bit-level Hamming distance between two non-negative integers by coun
 
 Behaviour
 
-- Export a named function bitHamming(x, y) from src/lib/main.js (or the library entry point).
+- Export a named function hammingBits(x, y) from src/lib/main.js (or the library entry point).
 - Accept only non-negative integers; if a parameter is not a number or not an integer, throw TypeError.
 - If a parameter is negative, throw RangeError.
 - Compute the number of differing bits between x and y (XOR then popcount).
@@ -14,7 +14,7 @@ Behaviour
 
 API
 
-- bitHamming(x: number, y: number) -> number
+- hammingBits(x: number, y: number) -> number
   - Throws TypeError for non-number or non-integer arguments.
   - Throws RangeError for negative integers.
 
