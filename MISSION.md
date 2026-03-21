@@ -23,4 +23,4 @@ A JavaScript library for computing Hamming distances — between equal-length st
 - [x] Bit-level Hamming distance between `1` and `4` is `2` (binary: 001 vs 100)
 - [x] Bit-level Hamming distance between `0` and `0` is `0`
 - [x] All unit tests pass
-- [ ] README documents usage with examples
+- [x] README documents usage with examples
