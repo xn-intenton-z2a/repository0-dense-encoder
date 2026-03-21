@@ -37,7 +37,16 @@
       document.getElementById('lib-name').textContent = name;
       document.getElementById('lib-version').textContent = version;
       document.getElementById('lib-description').textContent = description || '(no description)';
-      document.getElementById('demo-output').textContent = JSON.stringify({ name, version, description }, null, 2);
+      const out = {
+        identity: { name, version, description },
+        examples: {
+          "hammingString('karolin', 'kathrin')": hammingString('karolin', 'kathrin'),
+          "hammingString('', '')": hammingString('', ''),
+          "hammingBits(1,4)": hammingBits(1,4),
+          "hammingBits(0,0)": hammingBits(0,0)
+        }
+      };
+      document.getElementById('demo-output').textContent = JSON.stringify(out, null, 2);
       document.title = name + ' v' + version;
     } catch (e) {
       document.getElementById('lib-version').textContent = '(error)';

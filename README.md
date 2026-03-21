@@ -1,15 +1,10 @@
 # repo
 
-This repository is powered by [intentiön agentic-lib](https://github.com/xn-intenton-z2a/agentic-lib) — autonomous code transformation driven by GitHub Copilot. Write a mission, and the system generates issues, writes code, runs tests, and opens pull requests.
+A small library for computing Hamming distances between strings (Unicode-aware) and between non-negative integers (bitwise).
 
-## Hamming distance utilities
+Usage examples
 
-This library provides two named exports for computing Hamming distance:
-
-- hammingString(a, b): compute Hamming distance between two equal-length strings measured by Unicode code points. Throws TypeError if inputs are not strings and RangeError if lengths differ.
-- hammingBits(x, y): compute Hamming distance between two non-negative integers by counting differing bits. Throws TypeError for non-integers and RangeError for negative values.
-
-Usage examples:
+Node / ESM:
 
 ```js
 import { hammingString, hammingBits } from './src/lib/main.js';
@@ -21,4 +16,20 @@ console.log(hammingBits(1, 4)); // 2
 console.log(hammingBits(0, 0)); // 0
 ```
 
-The rest of the README and project description remains unchanged; see the repository homepage for more details.
+Browser (website demo)
+
+The website at `src/web/index.html` imports the library and shows identity and example outputs. The browser entry re-exports from the library at `src/web/lib.js`.
+
+API
+
+- hammingString(a, b): number
+  - Computes Hamming distance between two strings by Unicode code points.
+  - Throws TypeError if arguments are not strings.
+  - Throws RangeError if strings have different lengths (in Unicode code points).
+
+- hammingBits(x, y): number
+  - Computes number of differing bits between two non-negative integers.
+  - Throws TypeError if arguments are not integers.
+  - Throws RangeError if any argument is negative.
+
+License: MIT
