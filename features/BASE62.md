@@ -6,10 +6,10 @@ Implement canonical base62 encoding registered under the name base62. Use the al
 
 Acceptance Criteria
 
-- [ ] A named encoding base62 is registered with charsetSize 62 and bitsPerChar ≈ 5.954.
+- [ ] A named encoding base62 is registered with charsetSize 62 and bitsPerChar = 5.954 (presented to three decimal places).
 - [ ] encode and decode are round-trip for edge-cases: empty buffer, single byte, all zeros, all 0xFF.
-- [ ] Unit tests verify that a 16-byte UUID round-trips and that encoded length matches the calculated length for base62 (ceil((8*16)/log2(62))).
-- [ ] listEncodings returns metadata for base62 including name, charsetSize and bitsPerChar.
+- [ ] Unit tests verify that a 16-byte (128-bit) UUID round-trips and that the encoded length equals 22 characters (ceil(128 / log2(62)) = 22).
+- [ ] listEncodings returns metadata for base62 including name, charsetSize and bitsPerChar formatted to three decimals.
 
 Notes
 
