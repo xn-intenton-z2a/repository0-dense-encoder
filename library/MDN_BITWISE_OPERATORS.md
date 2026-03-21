@@ -1,45 +1,35 @@
-TITLE: MDN_BITWISE_OPERATORS
+MDN_BITWISE_OPERATORS
 
 Table of contents:
-1. JavaScript bitwise operators semantics
-2. Integer conversion rules and limits
-3. XOR and popcount pattern for Hamming distance
-4. Implementation details for counting differing bits
-5. Edge cases and numeric limits (negative numbers, signed 32-bit behavior)
-6. Supplementary reference details
-7. Digest and retrieval metadata
-8. Attribution and data size
+- Overview
+- Bitwise operator semantics in JavaScript
+- Counting differing bits between non-negative integers
+- Implementation patterns and edge cases
 
-1. JavaScript bitwise operators semantics
-- Bitwise operators operate on 32-bit signed integers: operands are converted using ToInt32. Operators include &, |, ^, ~, <<, >>, >>>.
-- For Hamming distance between non-negative integers within 32-bit range, compute a ^ b then count set bits.
+Overview:
+JavaScript bitwise operators operate on 32-bit signed integers. For calculating Hamming distance between non-negative integers, convert numbers into bit representations and count differing bits using XOR and bit counting.
 
-2. Integer conversion rules and limits
-- ToInt32 conversion reduces numbers to 32-bit signed two's complement; large integers outside 32-bits will be truncated.
-- For mission requiring non-negative integers and potentially larger ranges, use BigInt and BigInt bitwise operations (available in modern Node) to avoid 32-bit truncation.
+Key operator and pattern:
+- XOR (^) returns a number whose bits are 1 where the corresponding bits of its operands differ.
+- To compute differing bits: let x = a ^ b; count set bits in x.
 
-3. XOR and popcount pattern for Hamming distance
-- Compute xor = a ^ b (Number or BigInt). Then count set bits in xor.
-- For Number (32-bit): use Kernighan's method: while (xor !== 0) { xor &= xor - 1; count++ }
-- For BigInt: use while (xor !== 0n) { xor &= xor - 1n; count++ }
+Counting set bits (population count) implementations:
+- Kernighan's algorithm (fast, loop over set bits):
+  while (x !== 0) { count++; x &= x - 1; }
+  This loops once per set bit.
+- Builtins: For environments supporting BigInt and large integers, use BigInt(x) and similar bit methods; for mission scope use 32-bit integers.
 
-4. Implementation details for counting differing bits
-- Brian Kernighan's algorithm is O(k) where k = number of set bits; efficient for sparse bits.
-- Alternative: use table lookup per byte/16-bit word or use Number.prototype.toString(2).split('1').length-1 (less efficient and allocates).
-- For very large integers beyond Number, use BigInt popcount with Kernighan loop.
+Validation and integer handling:
+- Validate inputs are numbers and non-negative integers (Number.isInteger(n) && n >= 0); else throw TypeError or RangeError respectively.
+- Coerce to 32-bit unsigned for bit operations: use >>> 0 to ensure unsigned 32-bit integer before XOR and counting, e.g., const xa = a >>> 0; const xb = b >>> 0; const diff = xa ^ xb;
+- Edge cases: large integers beyond 32 bits will be truncated by bitwise operators; for values > 2^32-1, use BigInt-based population count: let diff = BigInt(a) ^ BigInt(b); then count bits using loop: while (diff > 0n) { count++; diff &= diff - 1n; }
 
-5. Edge cases and numeric limits (negative numbers, signed 32-bit behavior)
-- Mission requires RangeError for negative integers.
-- Be explicit: validate typeof === 'number' and Number.isInteger for Number inputs; for BigInt accept typeof === 'bigint' and non-negative check.
+Supplementary details:
+- Use Kernighan algorithm for performance and simplicity when using 32-bit numbers.
+- For 0 vs 0, XOR yields 0 and count remains 0.
 
-6. Supplementary reference details
-- Bitwise operators behave on 32-bit signed integers; shift semantics and sign extension apply for >>.
-- Use >>> to perform unsigned right shift.
-
-7. Digest and retrieval metadata
+Reference & retrieval:
+- Source: MDN — Bitwise Operators
+- URL: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Bitwise_Operators
 - Retrieved: 2026-03-21
-- Source: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Bitwise_Operators
-
-8. Attribution and data size
-- Source: MDN Web Docs — Bitwise operators
-- Crawl size: 238419 bytes (HTML)
+- Data size: fetched HTML (cached) via HTTP

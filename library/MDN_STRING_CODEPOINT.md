@@ -1,45 +1,38 @@
-TITLE: MDN_STRING_CODEPOINT
+MDN_STRING_CODEPOINT
 
 Table of contents:
-1. Behavior of String code points in JavaScript
-2. String normalization for code point iteration
-3. Correct comparison algorithm for Unicode strings
-4. Edge cases: surrogate pairs, combining marks
-5. Implementation notes and examples (technical patterns)
-6. Supplementary specifications
-7. Digest and retrieval metadata
-8. Attribution and data size
+- Overview
+- String code points vs UTF-16 code units
+- String.prototype.codePointAt(index) signature and behavior
+- Iterating over code points (for...of) and surrogate pair handling
+- Implementation notes for Unicode-correct string comparison
 
-1. Behavior of String code points in JavaScript
-- JavaScript strings are sequences of UTF-16 code units; characters outside BMP (U+10000+) are represented by surrogate pairs.
-- Use String.prototype.codePointAt(pos) to obtain the full Unicode code point at a code unit index.
-- To iterate by code points, use for-of on the string (which yields Unicode code points) or use Array.from(string) which splits by code points.
+Overview:
+The String.codePointAt method returns the Unicode code point value at a given position in a string, properly interpreting surrogate pairs. Use codePointAt to obtain numeric code points for accurate per-code-point comparison instead of comparing UTF-16 code units.
 
-2. String normalization for code point iteration
-- Unicode normalization (NFC/NFD) affects combining marks; for canonical equivalence, normalize strings with String.prototype.normalize(form) before comparison when required.
+Signature and behavior:
+- codePointAt(index) -> number | undefined
+- Parameters: index: integer (0-based index of code unit position). If index is out of range, returns undefined.
+- Return: integer code point value (e.g., U+1F600 -> 128512) when a full code point exists starting at the given index.
+- If the code unit at index is the high surrogate of a valid surrogate pair (high-surrogate followed by low-surrogate), codePointAt returns the combined code point value and should be advanced by 2 code units when iterating.
+- If the code unit is a low surrogate or an isolated surrogate, codePointAt returns the code unit's value.
 
-3. Correct comparison algorithm for Unicode strings
-- For Hamming distance per-mission: compare sequences of code points, i.e., logical characters.
-- Steps: convert each string to an array of code points (e.g., Array.from(str)), verify lengths equal, then compare array elements by numeric code point equality.
-- On unequal lengths, throw RangeError.
+Iterating over code points:
+- Using for (const ch of string) iterates by Unicode code points (ES2015 iterator) rather than 16-bit code units.
+- To compare two strings by code points, iterate both using for...of or convert to arrays of code points using Array.from(str) which uses the string iterator semantics.
 
-4. Edge cases: surrogate pairs, combining marks
-- Surrogate pairs: codePointAt and for-of/Array.from handle surrogate pairs correctly; do not compare code units.
-- Combining marks: normalization may be necessary; if mission requires canonical character equality, call normalize('NFC') on both strings prior to code point array creation.
+Implementation notes for Hamming string distance:
+- Validate both inputs are strings; throw TypeError for non-strings.
+- Convert both strings to arrays of code points: const a = Array.from(strA); const b = Array.from(strB);
+- If a.length !== b.length, throw RangeError for unequal-length strings.
+- Count positions where a[i] !== b[i]. Use strict equality on code point strings (not numeric code points) or compare numeric code point values via codePointAt on iterator output.
+- Empty strings: both Array.from("") -> [] ; distance between two empty arrays is 0.
 
-5. Implementation notes and examples (technical patterns)
-- Use: const aPoints = Array.from(a.normalize('NFC')); const bPoints = Array.from(b.normalize('NFC'));
-- Compare lengths: if (aPoints.length !== bPoints.length) throw RangeError
-- Count differences: for (let i=0;i<aPoints.length;i++) if (aPoints[i] !== bPoints[i]) count++
+Supplementary details (specification snippets):
+- ECMAScript string iterator and Array.from semantics: string iterator yields full Unicode code point sequences; this is the correct way to normalise for per-code-point operations.
 
-6. Supplementary specifications
-- codePointAt returns integer code point values; equality comparison uses numeric equality.
-- For performance on very long strings, consider iterating with for-of rather than creating intermediate arrays if memory is constrained.
-
-7. Digest and retrieval metadata
+Reference & retrieval:
+- Source: MDN — String.prototype.codePointAt
+- URL: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/codePointAt
 - Retrieved: 2026-03-21
-- Source: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/codePointAt
-
-8. Attribution and data size
-- Source: MDN Web Docs — String.prototype.codePointAt
-- Crawl size: 162097 bytes (HTML)
+- Data size: fetched HTML (cached) via HTTP

@@ -1,34 +1,26 @@
-TITLE: NPM_HAMMING_DISTANCE
+NPM_HAMMING_DISTANCE
 
 Table of contents:
-1. Package summary and API surface
-2. Typical usage patterns
-3. Limitations and compatibility notes
-4. Implementation hints derived from package readme
-5. Digest and retrieval metadata
-6. Attribution and data size
+- Package overview
+- API surface (exported functions and parameters)
+- Typical usage patterns and examples
+- Limitations and input validation
 
-1. Package summary and API surface
-- Package name: hamming-distance (npm)
-- Typical export: a function that computes Hamming distance between inputs (may accept strings or integers depending on package). Verify compatibility before use.
+Package overview:
+- The npm package 'hamming-distance' provides utilities to compute Hamming distance between buffers, strings, or integers. Behaviour varies by package; inspect package README for exact method signatures.
 
-2. Typical usage patterns
-- Install via npm i hamming-distance
-- Call: const distance = require('hamming-distance')(a, b) or import { hamming } from 'hamming-distance' depending on module type.
-- Beware: package pages sometimes protected by Cloudflare; package content should be validated by installing and reading package source when using in production.
+API surface (common patterns):
+- distance(a, b) -> number
+  - a, b: inputs of same type (strings, Buffers, numbers)
+  - Throws TypeError for mismatched types or invalid inputs
+- For strings, many packages assume UTF-8 / byte-level comparison; for Unicode-aware code-point comparisons prefer implementing via Array.from and comparing code points.
 
-3. Limitations and compatibility notes
-- NPM package page required JS and cookies to view full readme in the crawl; crawler saw Cloudflare challenge HTML.
-- Do not rely solely on package page for API details; install and inspect package source or use package repo for authoritative API signatures.
+Limitations:
+- Many npm packages perform byte-level comparisons and may not handle Unicode code points correctly — they compare UTF-8/UTF-16 code units or buffer bytes.
+- For integer bitwise distance, packages may use 32-bit operations and thus truncate numbers > 32 bits.
 
-4. Implementation hints derived from package readme
-- Many small packages implement Hamming by converting strings to arrays of characters and comparing indices, or by XOR for numeric inputs; follow mission input validation rules (TypeError, RangeError) and Unicode code point handling.
-
-5. Digest and retrieval metadata
+Reference & retrieval:
+- Source: npm — hamming-distance package page
+- URL: https://www.npmjs.com/package/hamming-distance
 - Retrieved: 2026-03-21
-- Source: https://www.npmjs.com/package/hamming-distance
-- Crawl note: page returned Cloudflare blocking content; 7201 bytes captured but content contains JS challenge page rather than full README.
-
-6. Attribution and data size
-- Source: npmjs.com — package hamming-distance
-- Crawl size: 7201 bytes (HTML, challenge page)
+- Data size: request blocked by cloud protections; use package page for summary and README when available.
