@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // SPDX-License-Identifier: MIT
 // Copyright (C) 2025-2026 Polycode Limited
-// src/lib/main.js — dense encoder library
+// src/lib/main.js
 
 const isNode = typeof process !== "undefined" && !!process.versions?.node;
 
@@ -15,151 +15,18 @@ if (isNode) {
     const resp = await fetch(new URL("../../package.json", import.meta.url));
     pkg = await resp.json();
   } catch {
-    pkg = { name: document.title || "repo", version: "0.0.0", description: "" };
+    pkg = { name: document.title, version: "0.0.0", description: "" };
   }
 }
 
 export const name = pkg.name;
 export const version = pkg.version;
-export const description = pkg.description || "";
+export const description = pkg.description;
 
 export function getIdentity() {
   return { name, version, description };
 }
 
-// Encoding registry and implementation
-const encodings = new Map();
-
-function validateCharset(charset) {
-  if (typeof charset !== "string") throw new TypeError("charset must be a string");
-  const chars = Array.from(charset);
-  const set = new Set(chars);
-  if (set.size !== chars.length) throw new Error("Charset must not contain duplicate characters");
-  if (chars.length < 2) throw new Error("Charset must contain at least two characters");
-}
-
-export function createEncoding(name, charset) {
-  if (typeof name !== "string" || !name) throw new TypeError("encoding name must be a non-empty string");
-  validateCharset(charset);
-  const chars = Array.from(charset);
-  const base = chars.length;
-  const charToIndex = Object.create(null);
-  for (let i = 0; i < chars.length; i++) charToIndex[chars[i]] = i;
-  const bitsPerChar = Math.log2(base);
-
-  function encode(bytes) {
-    if (!(bytes instanceof Uint8Array)) throw new TypeError("input must be a Uint8Array");
-    if (bytes.length === 0) return "";
-    // count leading zero bytes
-    let i = 0;
-    while (i < bytes.length && bytes[i] === 0) i++;
-    const leadingZeros = i;
-    // convert remaining bytes to BigInt
-    let value = 0n;
-    for (let j = i; j < bytes.length; j++) {
-      value = (value << 8n) | BigInt(bytes[j]);
-    }
-    if (value === 0n) {
-      // all zeros
-      return chars[0].repeat(leadingZeros);
-    }
-    let out = "";
-    while (value > 0n) {
-      const rem = Number(value % BigInt(base));
-      out += chars[rem];
-      value = value / BigInt(base);
-    }
-    out = out.split("").reverse().join("");
-    if (leadingZeros > 0) out = chars[0].repeat(leadingZeros) + out;
-    return out;
-  }
-
-  function decode(str) {
-    if (typeof str !== "string") throw new TypeError("input must be a string");
-    if (str.length === 0) return new Uint8Array(0);
-    // leading chars equal to chars[0] represent leading zero bytes
-    let leadingZeros = 0;
-    while (leadingZeros < str.length && str[leadingZeros] === chars[0]) leadingZeros++;
-    const rest = str.slice(leadingZeros);
-    if (rest.length === 0) return new Uint8Array(leadingZeros);
-    let value = 0n;
-    for (const ch of rest) {
-      const idx = charToIndex[ch];
-      if (idx === undefined) throw new Error(`Invalid character '${ch}' for encoding '${name}'`);
-      value = value * BigInt(base) + BigInt(idx);
-    }
-    const bytes = [];
-    while (value > 0n) {
-      bytes.push(Number(value & 0xffn));
-      value = value >> 8n;
-    }
-    bytes.reverse();
-    const out = new Uint8Array(leadingZeros + bytes.length);
-    if (leadingZeros > 0) out.fill(0, 0, leadingZeros);
-    out.set(bytes, leadingZeros);
-    return out;
-  }
-
-  const encoding = { name, charset, base, bitsPerChar, encode, decode };
-  encodings.set(name, encoding);
-  return encoding;
-}
-
-function getEncoding(value) {
-  if (typeof value === "string") {
-    const e = encodings.get(value);
-    if (!e) throw new Error(`Unknown encoding: ${value}`);
-    return e;
-  }
-  if (value && typeof value.encode === "function" && typeof value.decode === "function") return value;
-  throw new TypeError("encoding must be a name or an encoding object");
-}
-
-export function encode(bytes, encoding) {
-  const enc = getEncoding(encoding);
-  return enc.encode(bytes);
-}
-
-export function decode(str, encoding) {
-  const enc = getEncoding(encoding);
-  return enc.decode(str);
-}
-
-export function listEncodings() {
-  return Array.from(encodings.values()).map(e => ({ name: e.name, bitsPerChar: e.bitsPerChar, charsetSize: e.base, charset: e.charset }));
-}
-
-export function encodeUUID(uuid, encoding) {
-  if (typeof uuid !== "string") throw new TypeError("uuid must be a string");
-  const hex = uuid.replace(/-/g, "").toLowerCase();
-  if (!/^[0-9a-f]{32}$/.test(hex)) throw new Error("invalid uuid format");
-  const bytes = new Uint8Array(16);
-  for (let i = 0; i < 16; i++) bytes[i] = parseInt(hex.substr(i * 2, 2), 16);
-  const enc = getEncoding(encoding);
-  const s = enc.encode(bytes);
-  // shorthand requires reversing the encoded string
-  return s.split("").reverse().join("");
-}
-
-// Built-in encodings
-// base62: 0-9 a-z A-Z
-createEncoding("base62", "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ");
-// base85 (Z85-like charset)
-createEncoding("base85", "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ.-:+=^!/*?&<>()[]{}@%$#");
-// base91: printable ASCII starting at '!' (33) for 91 chars
-let b91 = "";
-for (let c = 33; c < 33 + 91; c++) b91 += String.fromCharCode(c);
-createEncoding("base91", b91);
-// high-density custom: printable ASCII 33..126 excluding ambiguous characters 0/O/1/l/I
-const ambiguous = new Set(["0", "O", "1", "l", "I"]);
-let high = "";
-for (let c = 33; c <= 126; c++) {
-  const ch = String.fromCharCode(c);
-  if (!ambiguous.has(ch)) high += ch;
-}
-createEncoding("high-density", high);
-
-// CLI entry
 export function main(args) {
   if (args?.includes("--version")) {
     console.log(version);

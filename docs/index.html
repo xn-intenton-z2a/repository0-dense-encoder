@@ -1,75 +1,48 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Dense Encoder Demo</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>repository0</title>
+  <meta property="og:title" content="repository0">
+  <meta property="og:description" content="An autonomous repository powered by agentic-lib">
+  <meta property="og:type" content="website">
   <style>
-    body { font-family: system-ui, -apple-system, sans-serif; max-width: 900px; margin: 0 auto; padding: 2rem; color: #111; }
-    header { display:flex; align-items:center; justify-content:space-between; }
-    h1 { margin: 0; }
-    .meta { font-family: monospace; background:#f6f8fa; padding:0.75rem; border-radius:6px; }
-    table { width:100%; border-collapse: collapse; margin-top:1rem; }
-    th, td { text-align:left; padding:0.5rem; border-bottom:1px solid #eee; font-family: monospace; }
-    #demo-output { background:#1e1e1e; color:#d4d4d4; padding:1rem; border-radius:6px; font-family: monospace; white-space:pre-wrap; }
-    .small { font-size:0.9rem; color:#555; }
+    body { font-family: system-ui, -apple-system, sans-serif; max-width: 800px; margin: 0 auto; padding: 2rem; color: #333; }
+    h1 { border-bottom: 2px solid #eee; padding-bottom: 0.5rem; }
+    a { color: #0366d6; }
+    .identity { background: #f6f8fa; padding: 1rem; border-radius: 6px; margin: 1rem 0; font-family: monospace; }
+    .identity dt { font-weight: bold; color: #666; }
+    .identity dd { margin: 0 0 0.5rem 0; font-size: 1.1rem; }
+    #demo-output { background: #1e1e1e; color: #d4d4d4; padding: 1rem; border-radius: 6px; font-family: monospace; white-space: pre-wrap; min-height: 2rem; }
   </style>
 </head>
 <body>
-  <header>
-    <h1 id="lib-name">Dense Encoder</h1>
-    <div class="meta">
-      <div>Version: <span id="lib-version">loading...</span></div>
-    </div>
-  </header>
-  <p class="small">This demo shows the library encoding a sample UUID across available encodings.</p>
-
-  <section>
-    <h2>Sample UUID</h2>
-    <div id="sample-uuid" class="small">01234567-89ab-cdef-0123-456789abcdef</div>
-  </section>
-
-  <section>
-    <h2>Encodings</h2>
-    <table id="encodings-table">
-      <thead>
-        <tr><th>Encoding</th><th>Bits/char</th><th>Charset size</th><th>Sample (encoded)</th></tr>
-      </thead>
-      <tbody></tbody>
-    </table>
-  </section>
-
-  <h2>Raw Output</h2>
-  <div id="demo-output">Loading...</div>
-
+  <h1 id="lib-name">repository0</h1>
+  <div class="identity">
+    <dl>
+      <dt>Version</dt>
+      <dd id="lib-version">loading...</dd>
+      <dt>Description</dt>
+      <dd id="lib-description">loading...</dd>
+    </dl>
+  </div>
+  <h2>Output</h2>
+  <div id="demo-output">Loading library...</div>
+  <h2>About</h2>
+  <p>This website uses the library. See <a href="https://github.com/xn-intenton-z2a/repository0">the repository</a> for source code and mission details.</p>
   <script type="module">
     try {
-      const mod = await import('./lib.js');
-      const { name, version, description, listEncodings, encodeUUID, encode } = mod;
-      document.getElementById('lib-name').textContent = name || 'dense-encoder';
-      document.getElementById('lib-version').textContent = version || '0.0.0';
-
-      const sample = document.getElementById('sample-uuid').textContent.trim();
-      const tableBody = document.querySelector('#encodings-table tbody');
-      const encs = listEncodings();
-      const results = [];
-      for (const e of encs) {
-        let encoded = '(error)';
-        try {
-          encoded = encodeUUID(sample, e.name);
-        } catch (err) {
-          encoded = 'error: ' + err.message;
-        }
-        const tr = document.createElement('tr');
-        tr.innerHTML = `<td>${e.name}</td><td>${e.bitsPerChar.toFixed(2)}</td><td>${e.charsetSize}</td><td>${encoded}</td>`;
-        tableBody.appendChild(tr);
-        results.push({ name: e.name, encoded });
-      }
-
-      document.getElementById('demo-output').textContent = JSON.stringify({ sample, results }, null, 2);
+      const { name, version, description } = await import('./lib.js');
+      document.getElementById('lib-name').textContent = name;
+      document.getElementById('lib-version').textContent = version;
+      document.getElementById('lib-description').textContent = description || '(no description)';
+      document.getElementById('demo-output').textContent = JSON.stringify({ name, version, description }, null, 2);
+      document.title = name + ' v' + version;
     } catch (e) {
-      document.getElementById('demo-output').textContent = 'Failed to load demo: ' + e.message;
       document.getElementById('lib-version').textContent = '(error)';
+      document.getElementById('lib-description').textContent = e.message;
+      document.getElementById('demo-output').textContent = 'Failed to load library: ' + e.message;
     }
   </script>
 </body>
