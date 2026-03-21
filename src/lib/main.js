@@ -27,39 +27,6 @@ export function getIdentity() {
   return { name, version, description };
 }
 
-// FizzBuzz single-value function
-export function fizzBuzzSingle(n) {
-  // Validate type
-  if (typeof n !== "number" || !Number.isInteger(n)) {
-    throw new TypeError("n must be an integer");
-  }
-  // Require positive integers for single-value API
-  if (n <= 0) {
-    throw new RangeError("n must be a positive integer");
-  }
-  if (n % 15 === 0) return "FizzBuzz";
-  if (n % 3 === 0) return "Fizz";
-  if (n % 5 === 0) return "Buzz";
-  return String(n);
-}
-
-// FizzBuzz range function
-export function fizzBuzz(n) {
-  // Validate type
-  if (typeof n !== "number" || !Number.isInteger(n)) {
-    throw new TypeError("n must be an integer");
-  }
-  if (n < 0) {
-    throw new RangeError("n must be a non-negative integer");
-  }
-  if (n === 0) return [];
-  const out = [];
-  for (let i = 1; i <= n; i++) {
-    out.push(fizzBuzzSingle(i));
-  }
-  return out;
-}
-
 export function main(args) {
   if (args?.includes("--version")) {
     console.log(version);
