@@ -14,18 +14,33 @@ From `src/lib/main.js` the following named exports are available:
 
 - name, version, description, getIdentity(), main()
 
-## Examples
+## Usage Examples
+
+String Hamming distance (Unicode-aware):
 
 ```js
-import { hammingString, hammingInt } from './src/lib/main.js';
+import { hammingString } from './src/lib/main.js';
 
 console.log(hammingString('karolin', 'kathrin')); // 3
 console.log(hammingString('', '')); // 0
 console.log(hammingString('a😊b', 'a😃b')); // 1 (emoji differs)
+```
+
+Integer Hamming distance (bitwise):
+
+```js
+import { hammingInt } from './src/lib/main.js';
 
 console.log(hammingInt(1, 4)); // 2 (001 vs 100)
 console.log(hammingInt(0, 0)); // 0
 ```
+
+## Behaviour and Errors
+
+- hammingString throws TypeError if either argument is not a string.
+- hammingString throws RangeError if the strings are not the same length when counted as Unicode code points.
+- hammingInt throws TypeError if either argument is not an integer.
+- hammingInt throws RangeError if either argument is negative.
 
 ## Running tests
 
