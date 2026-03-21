@@ -22,5 +22,5 @@ A JavaScript library for computing Hamming distances — between equal-length st
 - [ ] Hamming distance between strings of different lengths throws `RangeError`
 - [ ] Bit-level Hamming distance between `1` and `4` is `2` (binary: 001 vs 100)
 - [ ] Bit-level Hamming distance between `0` and `0` is `0`
-- [ ] All unit tests pass
-- [ ] README documents usage with examples
+- [x] All unit tests pass
+- [x] README documents usage with examples
