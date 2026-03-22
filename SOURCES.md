@@ -16,6 +16,9 @@ Reference material and documentation sources for this project.
 - https://en.wikipedia.org/wiki/Time-optimal_control
 - https://en.wikipedia.org/wiki/Discrete-time_control_system
 - https://en.wikipedia.org/wiki/Integral_windup
+- https://en.wikipedia.org/wiki/Equations_of_motion
+- https://en.wikipedia.org/wiki/Guidance,_navigation,_and_control
+- https://en.wikipedia.org/wiki/Symplectic_integrator
 
 Additional curated sources (implementation and tooling):
 
