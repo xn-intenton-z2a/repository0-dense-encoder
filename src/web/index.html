@@ -33,11 +33,31 @@
   <p>This website uses the library. See <a href="https://github.com/xn-intenton-z2a/repository0">the repository</a> for source code and mission details.</p>
   <script type="module">
     try {
-      const { name, version, description } = await import('./lib.js');
+      const { name, version, description, hammingString, hammingBits } = await import('./lib.js');
       document.getElementById('lib-name').textContent = name;
       document.getElementById('lib-version').textContent = version;
       document.getElementById('lib-description').textContent = description || '(no description)';
-      document.getElementById('demo-output').textContent = JSON.stringify({ name, version, description }, null, 2);
+
+      const examples = [];
+      // string hamming examples
+      examples.push({
+        call: "hammingString('karolin','kathrin')",
+        result: hammingString('karolin', 'kathrin')
+      });
+      examples.push({
+        call: "hammingString('','')",
+        result: hammingString('', '')
+      });
+      // Unicode example with astral characters
+      const a = `a\u{1F600}b`;
+      const b = `a\u{1F601}b`;
+      examples.push({ call: `hammingString(${JSON.stringify(a)}, ${JSON.stringify(b)})`, result: hammingString(a, b) });
+
+      // bit hamming examples
+      examples.push({ call: 'hammingBits(1, 4)', result: hammingBits(1, 4) });
+      examples.push({ call: 'hammingBits(0, 0)', result: hammingBits(0, 0) });
+
+      document.getElementById('demo-output').textContent = JSON.stringify({ identity: { name, version, description }, examples }, null, 2);
       document.title = name + ' v' + version;
     } catch (e) {
       document.getElementById('lib-version').textContent = '(error)';

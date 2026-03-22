@@ -138,6 +138,34 @@ tests/behaviour/              <- Playwright E2E
 docs/                         <- build output for GitHub Pages
 ```
 
+## Hamming API
+
+This repository implements two Hamming distance utilities exported from `src/lib/main.js`:
+
+- `hammingString(a, b)` — computes Hamming distance between two strings by Unicode code points.
+  - Throws `TypeError` if either argument is not a string.
+  - Throws `RangeError` if the strings have different lengths (measured in code points).
+- `hammingBits(a, b)` — computes Hamming distance between two non-negative integers (counts differing bits).
+  - Throws `TypeError` if either argument is not an integer number.
+  - Throws `RangeError` if either argument is negative.
+
+Examples
+
+```js
+import { hammingString, hammingBits } from './src/lib/main.js';
+
+console.log(hammingString('karolin', 'kathrin')); // 3
+console.log(hammingString('', '')); // 0
+
+// Unicode (astral) characters are compared by code points
+console.log(hammingString('a\u{1F600}b', 'a\u{1F601}b')); // 1
+
+console.log(hammingBits(1, 4)); // 2 (001 vs 100)
+console.log(hammingBits(0, 0)); // 0
+```
+
+Add these functions to your browser pages via `src/web/lib.js` which re-exports them from the library.
+
 ## Updating
 
 The `init` workflow updates the agentic infrastructure automatically. To update manually:
