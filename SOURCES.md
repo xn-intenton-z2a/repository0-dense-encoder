@@ -27,6 +27,8 @@ Additional curated sources (implementation and tooling):
 - https://vitest.dev/guide/
 - https://en.wikipedia.org/wiki/Landing_(spaceflight)
 - https://en.wikipedia.org/wiki/Lunar_Module
+- https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math
+- https://www.khanacademy.org/science/physics/one-dimensional-motion
 
 Add URLs, papers, API docs, or other reference material here.
 The maintain-library workflow will process these into `library/` documents.

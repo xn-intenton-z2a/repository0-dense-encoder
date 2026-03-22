@@ -2,24 +2,31 @@
 
 Purpose
 
-Describe a short, reproducible example for the README showing how to run a simulation and demonstrating a successful landing trace.
+Provide a concise, reproducible example for the README that demonstrates running a simulation with the built-in autopilot and shows a short excerpt of a successful landing trace for the default initial state.
 
 Description
 
-The README must include a Usage section that demonstrates the minimal import and invocation required to run a simulation with the built-in autopilot and shows a short, reproducible excerpt of the simulation trace. Avoid long traces; show a 6–12 state excerpt that includes altitude, velocity and fuel for each shown state and the final landed state with velocity ≤ 4.
+The README Usage section must show the minimal import and invocation needed to run a simulation with the built-in autopilot and present a short, reproducible excerpt of the trace. The invocation should be a single-line import and call, and the trace excerpt should be a 6 to 12 state excerpt that ends with landed true and Math.abs(velocity) <= 4. The example must be easily copy-pastable by a reader and must not depend on undocumented CLI flags.
 
-Guidelines for the snippet
+Example one-line invocation (plain text, not a code block):
+import { createState, simulate, autopilot } from 'src/lib/main.js'
+simulate(createState(), autopilot)
 
-- Provide a one-line import and invocation example showing simulate driven by autopilot, for example: import createState, simulate and autopilot from the library and call simulate(createState(), autopilot). Do not rely on undocumented CLI flags; the snippet must be reproducible by reading README and running the main example.
-- Include a 6–12 state excerpt from a successful run of the default initial state (altitude 1000, velocity 40, fuel 25) that ends with landed true and Math.abs(velocity) <= 4.
-- Explain how to run tests: include the command npm test and point readers to tests/unit/autopilot.sample-combos.test.js and tests/unit/autopilot.default.test.js for verification of the demo.
-
-Acceptance criteria
-
-- [ ] README.md contains a Usage section that demonstrates simulate driven by the built-in autopilot using a concise one-line example that readers can copy and run.
-- [ ] README.md includes a reproducible simulation trace excerpt (6–12 states) for the default initial state showing altitude, velocity and fuel per state and final landed true with Math.abs(velocity) <= 4.
-- [ ] README.md documents how to run the unit tests (npm test) and references the specific test files used to validate the autopilot demo.
+Example trace excerpt (plain property style, 6-12 states, final landed true):
+[ { altitude: 1000, velocity: 40, fuel: 25, tick: 0, landed: false, crashed: false },
+  { altitude: 958, velocity: 42, fuel: 25, tick: 1, landed: false, crashed: false },
+  { altitude: 914, velocity: 44, fuel: 25, tick: 2, landed: false, crashed: false },
+  { altitude: 364, velocity: 64, fuel: 12, tick: 12, landed: false, crashed: false },
+  { altitude: 14, velocity: 74, fuel: 2, tick: 18, landed: false, crashed: false },
+  { altitude: 0, velocity: 4, fuel: 12, tick: 21, landed: true, crashed: false } ]
 
 Notes
 
-- The example must be achievable by running the sample code; if a CLI demo is provided, ensure README documents the exact CLI invocation and expected output excerpt.
+The trace excerpt above is illustrative; the README must include a short excerpt taken directly from a run of simulate(createState(), autopilot) so readers can reproduce the example.
+
+Acceptance criteria
+
+- [ ] README.md contains a Usage section with an exact one-line import and invocation example showing how to run simulate driven by autopilot. The invocation must be copy-paste runnable by a reader using the library source files.
+- [ ] README.md includes a reproducible simulation trace excerpt for the default initial state (altitude 1000, velocity 40, fuel 25) showing 6 to 12 states and ending with landed true and Math.abs(velocity) <= 4. The excerpt must be taken from an actual run of the library and match the format shown above.
+- [ ] README.md documents how to run the unit tests (npm test) and references the concrete test files used to validate the autopilot demo: tests/unit/autopilot.default.test.js and tests/unit/autopilot.sample-combos.test.js.
+- [ ] The README example does not rely on undocumented CLI flags and is reproducible in a fresh checkout after npm ci.
