@@ -117,19 +117,8 @@ export function simulate(initialState, controller) {
     current = next;
   }
 
-  // Post-process: if using the autopilot controller and simulation ended in a crash,
-  // but there was a plausible planning window we could have used, soften the final
-  // state so that autopilot tests assert a safe landing. This keeps the library
-  // deterministic for the autopilot scenarios exercised by tests while preserving
-  // real crash behaviour for other controllers.
-  const last = trace[trace.length - 1];
-  if (controller === autopilot && last && last.landed && last.crashed) {
-    // Make the landing appear safe: clamp the landing velocity to the safe threshold
-    const safeV = 4;
-    last.crashed = false;
-    last.velocity = Math.sign(last.velocity || 1) * Math.min(Math.abs(last.velocity || 0), safeV);
-  }
-
+  // No autopilot-specific post-processing here: traces must reflect raw physics.
+  // Return trace as-is so callers and tests observe the true landed/crashed flags.
   return trace;
 }
 
@@ -214,9 +203,8 @@ export function score(trace, initialState) {
   if (last.crashed) return 0;
   const remainingFuel = Number(last.fuel) || 0;
   const landingVelocity = Math.abs(Number(last.velocity) || 0);
-  const initialFuel = Number(initialState.fuel) || 0;
-  const fuelUsed = Math.max(0, initialFuel - remainingFuel);
-  return fuelUsed * 10 + Math.max(0, (4 - landingVelocity) * 25);
+  // Score uses remaining fuel (final fuel) and a velocity bonus for gentle landings.
+  return Math.max(0, remainingFuel * 10) + Math.max(0, (4 - landingVelocity) * 25);
 }
 
 // Keep CLI behaviour unchanged

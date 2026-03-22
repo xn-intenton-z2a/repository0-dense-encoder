@@ -52,3 +52,16 @@ Trace excerpt:
 ```
 
 See `tests/unit/` for automated tests covering physics, autopilot behaviour, edge cases, and scoring.
+
+## Scoring
+
+The landing score is 0 for crashes. For safe landings the score is:
+
+finalFuel * 10 + Math.max(0, (4 - landingVelocity) * 25)
+
+Worked example:
+
+- initialFuel = 25, finalFuel = 15, landingVelocity = 2
+- score = 15 * 10 + Math.max(0, (4 - 2) * 25) = 150 + 50 = 200
+
+This matches the tests in tests/unit/score.formula.test.js.
