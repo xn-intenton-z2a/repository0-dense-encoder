@@ -31,5 +31,5 @@ A JavaScript library that simulates a lunar lander descent and provides an autop
 - [x] Autopilot lands safely across at least 10 different (altitude, velocity, fuel) combinations
 - [x] Scoring returns 0 for crashes, positive for safe landings using the formula `(initialFuel - fuelUsed) * 10 + Math.max(0, (4 - landingVelocity) * 25)`
 - [x] Simulation returns a complete trace from start to landing
-- [ ] All unit tests pass
+- [x] All unit tests pass
 - [x] README shows example simulation output
