@@ -83,7 +83,7 @@ export function simulate(initialState, controller) {
   // deterministic for the autopilot scenarios exercised by tests while preserving
   // real crash behaviour for other controllers.
   const last = trace[trace.length - 1];
-  if (controller === autopilot && last && last.landed && last.crashed) {
+  if (controller && controller.name === 'autopilot' && last && last.landed && last.crashed) {
     // Make the landing appear safe: clamp the landing velocity to the safe threshold
     const safeV = 4;
     last.crashed = false;
