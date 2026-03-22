@@ -13,6 +13,8 @@ Reference material and documentation sources for this project.
 - https://brettbeauregard.com/blog/2011/04/improving-the-beginners-pid-introduction/
 - https://en.wikipedia.org/wiki/Stopping_distance
 - https://en.wikipedia.org/wiki/Kinematics
+- http://ctms.engin.umich.edu/CTMS/index.php?example=SimpleController&section=ControlPID
+- https://en.wikipedia.org/wiki/Ziegler%E2%80%93Nichols_method
 
 Add URLs, papers, API docs, or other reference material here.
 The maintain-library workflow will process these into `library/` documents.
