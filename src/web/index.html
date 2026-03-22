@@ -29,12 +29,15 @@
   </div>
   <h2>Simulation Output</h2>
   <div id="demo-output">Loading library and running demo...</div>
+  <p>Final status: <strong id="final-status">...</strong></p>
+  <p>Landing velocity: <span id="final-velocity">...</span> m/s</p>
+  <p>Final score: <span id="final-score">...</span></p>
   <h2>About</h2>
   <p>This website uses the library. See <a href="https://github.com/xn-intenton-z2a/repository0">the repository</a> for source code and mission details.</p>
   <script type="module">
     try {
       const lib = await import('./lib.js');
-      const { name, version, description, createState, simulate, autopilot } = lib;
+      const { name, version, description, createState, simulate, autopilot, score } = lib;
       document.getElementById('lib-name').textContent = name;
       document.getElementById('lib-version').textContent = version;
       document.getElementById('lib-description').textContent = description || '(no description)';
@@ -43,13 +46,14 @@
       const initial = createState();
       const trace = simulate(initial, autopilot);
       const last = trace[trace.length - 1];
-      const summary = {
-        initial,
-        final: last,
-        ticks: trace.length - 1,
-        safe: last.landed && !last.crashed,
-      };
-      document.getElementById('demo-output').textContent = JSON.stringify({ summary, trace }, null, 2);
+      const finalStatus = (last.landed && !last.crashed) ? 'LANDED' : (last.crashed ? 'CRASHED' : 'IN-FLIGHT');
+      const landingVelocity = Math.abs(last.velocity || 0);
+      const landingScore = score(trace, initial);
+      // Small structured UI for behaviour tests to query
+      document.getElementById('demo-output').textContent = JSON.stringify({ traceLength: trace.length, final: last }, null, 2);
+      document.getElementById('final-status').textContent = finalStatus;
+      document.getElementById('final-velocity').textContent = String(landingVelocity);
+      document.getElementById('final-score').textContent = String(landingScore);
       document.title = name + ' v' + version;
     } catch (e) {
       document.getElementById('lib-version').textContent = '(error)';

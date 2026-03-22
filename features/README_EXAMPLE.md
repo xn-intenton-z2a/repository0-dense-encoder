@@ -31,8 +31,11 @@ Acceptance criteria
 - [ ] README.md contains a Usage section with the exact one-line import and invocation shown above. Automated checks should search README.md for the substrings "import { createState, simulate, autopilot } from './src/lib/main.js'" and "simulate(createState(), autopilot)".
 - [x] README.md includes a reproducible simulation trace excerpt for the default initial state (altitude 1000, velocity 40, fuel 25) showing 6 to 12 states and ending with landed true and Math.abs(velocity) <= 4. The excerpt must be taken from an actual run of simulate(createState(), autopilot) and be present verbatim in README.md.
 - [ ] README.md documents how to run the unit tests (npm test) and references the concrete test files used to validate the autopilot demo: tests/unit/create_state.test.js and tests/unit/lander.test.js.
-- [ ] The README example does not rely on undocumented CLI flags and is reproducible in a fresh checkout after npm ci. Tests may include tests/unit/readme.test.js that assert the required substrings and verify the excerpt ends with landed true.
+- [ ] A unit test exists at tests/unit/readme.test.js that:
+  - Asserts README.md contains the exact import and invocation substrings.
+  - Extracts the trace excerpt from README.md (e.g., code block or fenced output) and asserts the final object in the excerpt has landed true and Math.abs(velocity) <= 4.
 
 Notes
 
-- Keep the Usage example minimal and copy-paste friendly. The presence of the exact one-line import and invocation enables simple automated README checks.
+- The exact one-line import string must appear verbatim so automated checks can locate the example.
+- The readme.test.js is a maintenance test to ensure documentation remains reproducible; add it to the unit test suite and mark it as required for acceptance.
