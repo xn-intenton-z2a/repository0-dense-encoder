@@ -6,7 +6,7 @@
 # During init:
 
 [schedule]
-supervisor = "maintenance"       # off | weekly | daily | hourly | continuous
+supervisor = "off"       # off | weekly | daily | hourly | continuous
 focus = "maintenance"                 # mission | maintenance
 
 [paths]
@@ -180,7 +180,7 @@ total = 7
 7 = { text = "README shows example simulation output", met = false }
 
 [init]
-timestamp = "2026-03-22T23:52:17.369Z"
+timestamp = "2026-03-22T23:57:57.444Z"
 mode = "purge"
 mission = "3-kyu-analyze-lunar-lander"
 mission-type = "3-kyu-analyze-lunar-lander"
