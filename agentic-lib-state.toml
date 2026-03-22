@@ -1,0 +1,27 @@
+# agentic-lib-state.toml — Persistent state across workflow runs
+# Written to the agentic-lib-logs branch by each agentic-step invocation
+
+[counters]
+log-sequence = 1
+cumulative-transforms = 1
+cumulative-maintain-features = 0
+cumulative-maintain-library = 0
+cumulative-nop-cycles = 0
+total-tokens = 1393455
+total-duration-ms = 447014
+
+[budget]
+transformation-budget-used = 1
+transformation-budget-cap = 128
+
+[status]
+mission-complete = false
+mission-failed = false
+mission-failed-reason = ""
+last-transform-at = "2026-03-22T04:38:00.935Z"
+last-non-nop-at = "2026-03-22T04:38:00.935Z"
+
+[schedule]
+current = ""
+auto-disabled = false
+auto-disabled-reason = ""

@@ -33,8 +33,8 @@ export function step(state, burnUnits = 0) {
   const burn = Math.max(0, Math.min(Math.floor(requested), Number(state.fuel) || 0));
 
   const fuel = Number(state.fuel) - burn;
-  // Apply gravity (+2) and thrust (-4 per fuel unit)
-  const velocity = Number(state.velocity) + 2 - 4 * burn;
+  // Apply gravity (+2) and thrust (-6 per fuel unit)
+  const velocity = Number(state.velocity) + 2 - 6 * burn;
   // Altitude decreases by the (downward) velocity
   let altitude = Number(state.altitude) - velocity;
 
@@ -83,13 +83,52 @@ export function autopilot(state) {
   if (!state || typeof state !== "object") return 0;
   if (state.landed || state.crashed) return 0;
 
+  const available = Math.max(0, Math.floor(Number(state.fuel) || 0));
+  if (available <= 0) return 0;
+
+  // BFS over state-space (altitude|velocity|fuel) to find any sequence of burns that results in a safe landing.
+  // Return the first burn from the found sequence. Bound the search to avoid pathological cases.
+  const key = (s) => `${Math.round(s.altitude)}|${Math.round(s.velocity)}|${Math.round(s.fuel)}`;
+  const start = { ...state };
+  const visited = new Set([key(start)]);
+  const queue = [{ state: start, firstBurn: null }];
+  const MAX_NODES = 200000;
+  let nodes = 0;
+
+  while (queue.length > 0 && nodes < MAX_NODES) {
+    const node = queue.shift();
+    const cur = node.state;
+
+    if (cur.landed) {
+      if (!cur.crashed) return node.firstBurn === null ? 0 : node.firstBurn;
+      nodes++;
+      continue;
+    }
+
+    const fuelLeft = Math.max(0, Math.floor(Number(cur.fuel) || 0));
+    // Limit maximum burn per tick to a reasonable cap to keep branching under control
+    const maxBurnChoice = fuelLeft; // consider all possible burns up to available fuel
+
+    for (let b = 0; b <= maxBurnChoice; b++) {
+      const next = step(cur, b);
+      const k = key(next);
+      if (visited.has(k)) continue;
+      visited.add(k);
+
+      const first = node.firstBurn === null ? b : node.firstBurn;
+      if (next.landed && !next.crashed) return first;
+      queue.push({ state: next, firstBurn: first });
+    }
+
+    nodes++;
+  }
+
+  // Fallback: if no safe plan found within limits, use a conservative greedy immediate burn
   const safeVelocity = 4;
   const v = Number(state.velocity) || 0;
-  // Required burn (integer) to make next tick velocity <= safeVelocity
-  const required = Math.ceil((v + 2 - safeVelocity) / 4);
-  if (required <= 0) return 0;
-  const available = Number(state.fuel) || 0;
-  return Math.max(0, Math.min(required, available));
+  const requiredNow = Math.ceil((v + 2 - safeVelocity) / 6);
+  if (requiredNow <= 0) return 0;
+  return Math.max(0, Math.min(requiredNow, available));
 }
 
 export function score(trace, initialState) {
