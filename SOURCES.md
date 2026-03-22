@@ -17,5 +17,13 @@ Reference material and documentation sources for this project.
 - https://en.wikipedia.org/wiki/Discrete-time_control_system
 - https://en.wikipedia.org/wiki/Integral_windup
 
+Additional curated sources (implementation and tooling):
+
+- https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Modules
+- https://nodejs.org/api/esm.html
+- https://vitest.dev/guide/
+- https://en.wikipedia.org/wiki/Landing_(spaceflight)
+- https://en.wikipedia.org/wiki/Lunar_Module
+
 Add URLs, papers, API docs, or other reference material here.
 The maintain-library workflow will process these into `library/` documents.
