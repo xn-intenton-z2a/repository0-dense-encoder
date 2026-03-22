@@ -8,11 +8,17 @@ Description
 
 The README Usage section must show the minimal import and invocation needed to run a simulation with the built-in autopilot and present a short, reproducible excerpt of the trace. The invocation should be a single-line import and call, and the trace excerpt should be a 6 to 12 state excerpt that ends with landed true and Math.abs(velocity) <= 4. The example must be easily copy-pastable by a reader and must not depend on undocumented CLI flags.
 
-Example one-line invocation (plain text, not a code block):
-import { createState, simulate, autopilot } from 'src/lib/main.js'
+Required invocation text (must appear verbatim in README.md for automated checks):
+
+import { createState, simulate, autopilot } from './src/lib/main.js'
 simulate(createState(), autopilot)
 
-Example trace excerpt (plain property style, 6-12 states, final landed true):
+Required test command (must appear in README.md):
+
+npm test
+
+Example trace excerpt (the README should include a 6-12 state excerpt taken directly from a run of simulate(createState(), autopilot), final state must be landed true):
+
 [ { altitude: 1000, velocity: 40, fuel: 25, tick: 0, landed: false, crashed: false },
   { altitude: 958, velocity: 42, fuel: 25, tick: 1, landed: false, crashed: false },
   { altitude: 914, velocity: 44, fuel: 25, tick: 2, landed: false, crashed: false },
@@ -20,13 +26,13 @@ Example trace excerpt (plain property style, 6-12 states, final landed true):
   { altitude: 14, velocity: 74, fuel: 2, tick: 18, landed: false, crashed: false },
   { altitude: 0, velocity: 4, fuel: 12, tick: 21, landed: true, crashed: false } ]
 
-Notes
-
-The trace excerpt above is illustrative; the README must include a short excerpt taken directly from a run of simulate(createState(), autopilot) so readers can reproduce the example.
-
 Acceptance criteria
 
-- [ ] README.md contains a Usage section with an exact one-line import and invocation example showing how to run simulate driven by autopilot. The invocation must be copy-paste runnable by a reader using the library source files.
-- [x] README.md includes a reproducible simulation trace excerpt for the default initial state (altitude 1000, velocity 40, fuel 25) showing 6 to 12 states and ending with landed true and Math.abs(velocity) <= 4. The excerpt must be taken from an actual run of the library and match the format shown above.
+- [ ] README.md contains a Usage section with the exact one-line import and invocation shown above. Automated checks should search README.md for the substrings "import { createState, simulate, autopilot } from './src/lib/main.js'" and "simulate(createState(), autopilot)".
+- [x] README.md includes a reproducible simulation trace excerpt for the default initial state (altitude 1000, velocity 40, fuel 25) showing 6 to 12 states and ending with landed true and Math.abs(velocity) <= 4. The excerpt must be taken from an actual run of simulate(createState(), autopilot) and be present verbatim in README.md.
 - [ ] README.md documents how to run the unit tests (npm test) and references the concrete test files used to validate the autopilot demo: tests/unit/create_state.test.js and tests/unit/lander.test.js.
-- [ ] The README example does not rely on undocumented CLI flags and is reproducible in a fresh checkout after npm ci.
+- [ ] The README example does not rely on undocumented CLI flags and is reproducible in a fresh checkout after npm ci. Tests may include tests/unit/readme.test.js that assert the required substrings and verify the excerpt ends with landed true.
+
+Notes
+
+- Keep the Usage example minimal and copy-paste friendly. The presence of the exact one-line import and invocation enables simple automated README checks.
