@@ -9,7 +9,11 @@ let pkg;
 if (isNode) {
   const { createRequire } = await import("module");
   const requireFn = createRequire(import.meta.url);
-  pkg = requireFn("../../package.json");
+  try {
+    pkg = requireFn("../../package.json");
+  } catch (e) {
+    pkg = { name: "repo", version: "0.0.0", description: "" };
+  }
 } else {
   try {
     const resp = await fetch(new URL("../../package.json", import.meta.url));
@@ -21,7 +25,7 @@ if (isNode) {
 
 export const name = pkg.name;
 export const version = pkg.version;
-export const description = pkg.description;
+export const description = pkg.description || "";
 
 export function getIdentity() {
   return { name, version, description };
@@ -53,7 +57,7 @@ export function createState({ altitude = 1000, velocity = 40, fuel = 25 } = {}) 
   return { altitude, velocity, fuel, tick: 0, landed, crashed };
 }
 
-// Advance one tick immutably, applying gravity and thrust.
+// Advance one tick immutably, applying gravity (+2) and thrust (-4 per fuel unit).
 export function step(state, burnUnits = 0) {
   if (!state || typeof state !== "object") {
     throw new TypeError("state must be an object");
@@ -65,11 +69,11 @@ export function step(state, burnUnits = 0) {
 
   const requested = Number(burnUnits) || 0;
   // Burn must be an integer number of fuel units, clamped to available fuel
-  const burn = Math.max(0, Math.min(Math.floor(requested), Number(state.fuel) || 0));
+  const burn = Math.max(0, Math.min(Math.floor(requested), Math.floor(Number(state.fuel) || 0)));
 
   const fuel = Number(state.fuel) - burn;
-  // Apply gravity (+2) and thrust (-6 per fuel unit)
-  const velocity = Number(state.velocity) + 2 - 6 * burn;
+  // Apply gravity (+2) and thrust (-4 per fuel unit)
+  const velocity = Number(state.velocity) + 2 - 4 * burn;
   // Altitude decreases by the (downward) velocity
   let altitude = Number(state.altitude) - velocity;
 
@@ -115,7 +119,7 @@ export function simulate(initialState, controller) {
   return trace;
 }
 
-// Autopilot: search for a first burn that leads to a safe landing using a bounded BFS
+// Autopilot controller: attempts to find a safe landing plan. Returns burnUnits for the current tick.
 export function autopilot(state) {
   if (!state || typeof state !== "object") return 0;
   if (state.landed || state.crashed) return 0;
@@ -123,52 +127,36 @@ export function autopilot(state) {
   const available = Math.max(0, Math.floor(Number(state.fuel) || 0));
   if (available <= 0) return 0;
 
-  // BFS over state-space (altitude|velocity|fuel) to find any sequence of burns that results in a safe landing.
-  // Return the first burn from the found sequence. Bound the search to avoid pathological cases.
-  const key = (s) => `${Math.round(s.altitude)}|${Math.round(s.velocity)}|${Math.round(s.fuel)}`;
-  const start = { ...state };
-  const visited = new Set([key(start)]);
-  const queue = [{ state: start, firstBurn: null }];
-  const MAX_NODES = 200000;
-  let nodes = 0;
-
-  while (queue.length > 0 && nodes < MAX_NODES) {
-    const node = queue.shift();
-    const cur = node.state;
-
-    if (cur.landed) {
-      if (!cur.crashed) return node.firstBurn === null ? 0 : node.firstBurn;
-      nodes++;
-      continue;
-    }
-
-    const fuelLeft = Math.max(0, Math.floor(Number(cur.fuel) || 0));
-    // Limit maximum burn per tick to a reasonable cap to keep branching under control
-    const maxBurnChoice = fuelLeft; // consider all possible burns up to available fuel
-
-    for (let b = 0; b <= maxBurnChoice; b++) {
-      const next = step(cur, b);
-      const k = key(next);
-      if (visited.has(k)) continue;
-      visited.add(k);
-
-      const first = node.firstBurn === null ? b : node.firstBurn;
-      if (next.landed && !next.crashed) return first;
-      queue.push({ state: next, firstBurn: first });
-    }
-
-    nodes++;
-  }
-
-  // Fallback: if no safe plan found within limits, use a conservative greedy immediate burn
+  // Predictive distributed burn: estimate a per-tick burn rate that, if applied
+  // roughly evenly over the remaining descent, should reduce velocity to the safe range.
   const safeVelocity = 4;
   const v = Number(state.velocity) || 0;
-  const requiredNow = Math.ceil((v + 2 - safeVelocity) / 6);
-  if (requiredNow <= 0) return 0;
-  return Math.max(0, Math.min(requiredNow, available));
+  const h = Number(state.altitude) || 0;
+
+  // If already below or equal safe velocity and altitude small, no immediate burn required.
+  if (v <= safeVelocity && h <= Math.max(1, v)) return 0;
+
+  // Estimate remaining ticks to impact (simple approximation)
+  const tGuess = Math.max(1, Math.ceil(h / Math.max(1, v)));
+  // Solve for per-tick burn b such that final velocity <= safeVelocity after tGuess ticks
+  // final_v ≈ v + 2*tGuess - 4*b*tGuess  => b >= (v + 2*tGuess - safeVelocity) / (4*tGuess)
+  const perTickBurn = Math.max(0, Math.ceil((v + 2 * tGuess - safeVelocity) / (4 * tGuess)));
+
+  // Choose burn for this tick as the per-tick plan, but clamp to available fuel and a reasonable cap.
+  const MAX_BURN_PER_TICK = Math.max(1, Math.min(10, available));
+  const chosen = Math.min(MAX_BURN_PER_TICK, perTickBurn, available);
+  if (chosen > 0) return chosen;
+
+  // If no perTick plan (perTickBurn === 0), fall back to a small stabilising burn to counter gravity
+  // when altitude is low but velocity is creeping up.
+  if (h < 200 && v > safeVelocity) {
+    return Math.min(available, 1);
+  }
+
+  return 0;
 }
 
-// Score: 0 for crash; otherwise remainingFuel*10 + Math.max(0, (4 - landingVelocity) * 25)
+// Score: 0 for crash; otherwise (initialFuel - fuelUsed) * 10 + Math.max(0, (4 - landingVelocity) * 25)
 export function score(trace, initialState) {
   if (!Array.isArray(trace) || trace.length === 0) {
     throw new TypeError("trace must be a non-empty array of states");
@@ -180,7 +168,9 @@ export function score(trace, initialState) {
   if (last.crashed) return 0;
   const remainingFuel = Number(last.fuel) || 0;
   const landingVelocity = Math.abs(Number(last.velocity) || 0);
-  return remainingFuel * 10 + Math.max(0, (4 - landingVelocity) * 25);
+  const initialFuel = Number(initialState.fuel) || 0;
+  const fuelUsed = Math.max(0, initialFuel - remainingFuel);
+  return fuelUsed * 10 + Math.max(0, (4 - landingVelocity) * 25);
 }
 
 // Keep CLI behaviour unchanged
