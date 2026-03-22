@@ -7,7 +7,6 @@
 
 [schedule]
 supervisor = "maintenance"       # off | weekly | daily | hourly | continuous
-model = "gpt-5-mini"
 focus = "maintenance"                 # mission | maintenance
 
 [paths]
@@ -73,7 +72,7 @@ infinite-sessions = false        # set to true for long sessions with compaction
 [profiles.min]
 reasoning-effort = "low"                # low | medium | high | none
 infinite-sessions = false               # enable session compaction for long runs
-transformation-budget = 0             # max code-changing cycles per run
+transformation-budget = 16             # max code-changing cycles per run
 max-issues = 5                        # max open issues fetched from GitHub
 stale-days = 14                        # days since last activity before an issue is considered stale
 max-discussion-comments = 3               # max recent discussion comments fetched
@@ -181,8 +180,8 @@ total = 7
 7 = { text = "README shows example simulation output", met = false }
 
 [init]
-timestamp = "2026-03-22T01:13:43.033Z"
+timestamp = "2026-03-22T23:52:17.369Z"
 mode = "purge"
 mission = "3-kyu-analyze-lunar-lander"
 mission-type = "3-kyu-analyze-lunar-lander"
-version = "7.4.56"
+version = "7.4.57"

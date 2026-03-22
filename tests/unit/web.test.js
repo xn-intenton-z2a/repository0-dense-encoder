@@ -30,8 +30,5 @@ describe("Website", () => {
     const html = readFileSync("src/web/index.html", "utf8");
     expect(html).toContain("lib-name");
     expect(html).toContain("lib-version");
-    expect(html).toContain("final-status");
-    expect(html).toContain("final-velocity");
-    expect(html).toContain("final-score");
   });
 });

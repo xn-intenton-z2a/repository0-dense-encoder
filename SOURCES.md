@@ -2,42 +2,5 @@
 
 Reference material and documentation sources for this project.
 
-- https://en.wikipedia.org/wiki/Lunar_lander
-- https://en.wikipedia.org/wiki/Suicide_burn
-- https://en.wikipedia.org/wiki/PID_controller
-- https://en.wikipedia.org/wiki/Bang%E2%80%93bang_control
-- https://en.wikipedia.org/wiki/Euler_method
-- https://gafferongames.com/post/integration_basics/
-- https://brettbeauregard.com/blog/2011/04/improving-the-beginners-pid-introduction/
-- http://ctms.engin.umich.edu/CTMS/index.php?example=SimpleController&section=ControlPID
-- https://en.wikipedia.org/wiki/Stopping_distance
-- https://en.wikipedia.org/wiki/Kinematics
-- https://en.wikipedia.org/wiki/Optimal_control
-- https://en.wikipedia.org/wiki/Time-optimal_control
-- https://en.wikipedia.org/wiki/Discrete-time_control_system
-- https://en.wikipedia.org/wiki/Integral_windup
-- https://en.wikipedia.org/wiki/Equations_of_motion
-- https://en.wikipedia.org/wiki/Guidance,_navigation,_and_control
-- https://en.wikipedia.org/wiki/Symplectic_integrator
-- https://en.wikipedia.org/wiki/Impulse_(physics)
-- https://en.wikipedia.org/wiki/Thrust
-- https://en.wikipedia.org/wiki/Terminal_velocity
-
-Additional curated sources (implementation and tooling):
-
-- https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Modules
-- https://nodejs.org/api/esm.html
-- https://vitest.dev/guide/
-- https://en.wikipedia.org/wiki/Landing_(spaceflight)
-- https://en.wikipedia.org/wiki/Lunar_Module
-- https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math
-- https://www.khanacademy.org/science/physics/one-dimensional-motion
-
-Newly added sources (PID implementations and optimal control reference):
-
-- https://www.npmjs.com/package/node-pid-controller
-- https://www.npmjs.com/package/pid-controller
-- https://en.wikipedia.org/wiki/Pontryagin%27s_minimum_principle
-
 Add URLs, papers, API docs, or other reference material here.
 The maintain-library workflow will process these into `library/` documents.
