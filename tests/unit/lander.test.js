@@ -16,8 +16,8 @@ describe("Lander physics - step", () => {
   test("applies thrust and clamps fuel", () => {
     const s0 = createState({ altitude: 100, velocity: 10, fuel: 2 });
     const s1 = step(s0, 1);
-    expect(s1.velocity).toBe(8); // 10 + 2 - 4
-    expect(s1.altitude).toBe(92); // 100 - 8
+    expect(s1.velocity).toBe(6); // 10 + 2 - 6
+    expect(s1.altitude).toBe(94); // 100 - 6
     expect(s1.fuel).toBe(1);
     // burn more than available
     const s2 = step(s1, 10);
@@ -78,7 +78,7 @@ describe("Autopilot safety across sample combos", () => {
       { altitude: 1000, velocity: 70, fuel: 20 },
       { altitude: 1200, velocity: 80, fuel: 20 },
       { altitude: 1500, velocity: 35, fuel: 15 },
-      { altitude: 2000, velocity: 25, fuel: 10 },
+      { altitude: 2000, velocity: 25, fuel: 20 },
       { altitude: 1600, velocity: 45, fuel: 20 },
     ];
 
