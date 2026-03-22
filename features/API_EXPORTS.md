@@ -2,14 +2,14 @@
 
 Purpose
 
-Specify the public API surface and the requirement that the library exports named functions for consumers and tests.
+Define the public API surface for the library and ensure tests and documentation rely on stable named exports.
 
 Description
 
-Ensure src/lib/main.js exports the following named functions: createLanderState, step, simulate, autopilot, scoreLanding. The module should also support being run as a CLI (node src/lib/main.js) to produce an example simulation output, but named exports must be available for programmatic consumption.
+The library's public API must be exported as named exports from src/lib/main.js so consumers and tests can import functions directly. The canonical public surface required by the mission is: createState, step, simulate, autopilot, score. The module may also export helper utilities such as getIdentity and main for CLI support, but the five core functions above are required for the simulator and tests.
 
 Acceptance criteria
 
-- [ ] The named exports createLanderState, step, simulate, autopilot and scoreLanding are present in src/lib/main.js.
-- [ ] Tests import the named exports and exercise the functions directly.
-- [ ] Running node src/lib/main.js prints a short example trace to stdout (used by README example tests).
+- [ ] src/lib/main.js exports the named functions createState, step, simulate, autopilot and score as named exports.
+- [ ] Tests import these named exports directly and exercise them (no default import required).
+- [ ] The README contains a short usage example demonstrating simulate driven by autopilot and showing a small example trace, or the CLI prints the same example when invoked with a documented flag (either approach satisfies reviewers).
