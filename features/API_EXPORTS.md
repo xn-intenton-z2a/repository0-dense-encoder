@@ -12,4 +12,4 @@ Acceptance criteria
 
 - [x] src/lib/main.js exports the named functions createState, step, simulate, autopilot and score as named exports.
 - [x] Tests import these named exports directly and exercise them (no default import required).
-- [ ] The README contains a short usage example demonstrating simulate driven by autopilot and showing a small example trace, or the CLI prints the same example when invoked with a documented flag (either approach satisfies reviewers).
+- [x] The README contains a short usage example demonstrating simulate driven by autopilot and showing a small example trace, or the CLI prints the same example when invoked with a documented flag (either approach satisfies reviewers).

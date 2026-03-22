@@ -19,6 +19,9 @@ Reference material and documentation sources for this project.
 - https://en.wikipedia.org/wiki/Equations_of_motion
 - https://en.wikipedia.org/wiki/Guidance,_navigation,_and_control
 - https://en.wikipedia.org/wiki/Symplectic_integrator
+- https://en.wikipedia.org/wiki/Impulse_(physics)
+- https://en.wikipedia.org/wiki/Thrust
+- https://en.wikipedia.org/wiki/Terminal_velocity
 
 Additional curated sources (implementation and tooling):
 
