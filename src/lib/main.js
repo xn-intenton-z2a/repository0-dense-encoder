@@ -123,6 +123,9 @@ export function simulate(initialState, controller) {
 }
 
 // Autopilot controller: attempts to find a safe landing plan. Returns burnUnits for the current tick.
+// Stateful plan cache so autopilot can return a multi-tick plan deterministically
+let _autopilotPlan = null;
+
 export function autopilot(state) {
   if (!state || typeof state !== "object") return 0;
   if (state.landed || state.crashed) return 0;
@@ -131,63 +134,60 @@ export function autopilot(state) {
   if (available <= 0) return 0;
 
   const safeVelocity = 4;
-  const v = Number(state.velocity) || 0;
-  const h = Number(state.altitude) || 0;
 
-  // Quick exit when already within safe velocity
-  if (v <= safeVelocity) return 0;
+  // Simple state signature used to validate cached plans
+  const sig = `${Math.round(state.altitude)}|${Math.round(state.velocity)}|${Math.round(state.fuel)}|${state.tick}`;
+  if (_autopilotPlan && _autopilotPlan.sig === sig && Array.isArray(_autopilotPlan.actions) && _autopilotPlan.actions.length > 0) {
+    // Use the cached next action
+    const next = _autopilotPlan.actions.shift();
+    return Math.max(0, Math.floor(next || 0));
+  }
 
-  // Try to find a short plan (sequence of burns) that results in a safe landing
-  const MAX_SEARCH_DEPTH = 300; // don't search forever
-  const MAX_NODES = 80000;
-
-  // BFS queue nodes: { st, path }
+  // Breadth-first search to find a full sequence of burns that lands safely.
   const start = { st: { ...state }, path: [] };
   const queue = [start];
-  const visited = new Map(); // key -> depth seen at this state (to prune worse paths)
+  const visited = new Map(); // key -> max fuel seen
+  const MAX_NODES = 200000;
   let nodes = 0;
 
   while (queue.length > 0 && nodes < MAX_NODES) {
     const node = queue.shift();
-    const depth = node.path.length;
-    if (depth >= MAX_SEARCH_DEPTH) continue;
-
-    // generate a small set of candidate burns instead of all possibilities
     const fuelHere = Math.floor(Number(node.st.fuel) || 0);
+
+    // Build a set of candidate burns to explore (0..min(10,fuelHere)) and some heuristics
     const neededNow = Math.max(0, Math.ceil((Number(node.st.velocity) + 2 - safeVelocity) / 4));
-    const candidates = new Set();
-    candidates.add(0);
-    candidates.add(1);
-    if (neededNow > 0) candidates.add(neededNow);
-    candidates.add(Math.min(fuelHere, neededNow + 1));
-    candidates.add(Math.min(fuelHere, Math.ceil(fuelHere / 2)));
-    candidates.add(Math.min(fuelHere, 3));
-    candidates.add(fuelHere);
+    const maxRange = Math.min(fuelHere, 10);
+    const candidates = new Set([neededNow, Math.min(fuelHere, neededNow + 1), Math.min(fuelHere, Math.ceil(fuelHere / 2)), fuelHere]);
+    for (let i = 0; i <= maxRange; i++) candidates.add(i);
 
     for (const burn of Array.from(candidates).sort((a, b) => a - b)) {
       if (burn < 0 || burn > fuelHere) continue;
       const next = step(node.st, burn);
       nodes++;
       if (next.landed && !next.crashed) {
-        return node.path.length > 0 ? node.path[0] : burn;
+        const fullPath = node.path.concat(burn);
+        // Cache the plan so subsequent calls follow the same sequence
+        _autopilotPlan = { sig, actions: fullPath.slice(1) }; // first action will be returned now
+        return Math.max(0, Math.floor(fullPath[0] || 0));
       }
       if (next.crashed) continue;
 
-      const key = `${Math.round(next.altitude)}|${Math.round(next.velocity)}|${Math.round(next.fuel)}`;
-      const seenDepth = visited.get(key);
-      if (typeof seenDepth === "number" && seenDepth <= node.path.length + 1) continue;
-      visited.set(key, node.path.length + 1);
+      const key = `${Math.round(next.altitude)}|${Math.round(next.velocity)}`;
+      const bestFuel = visited.get(key);
+      if (typeof bestFuel === 'number' && Number(next.fuel) <= bestFuel) continue;
+      visited.set(key, Number(next.fuel));
 
-      const newPath = node.path.concat(burn);
-      queue.push({ st: next, path: newPath });
+      queue.push({ st: next, path: node.path.concat(burn) });
       if (nodes >= MAX_NODES) break;
     }
   }
 
-  // If no plan found, fall back to a simple conservative burn strategy
-  const neededNow2 = Math.max(0, Math.ceil((v + 2 - safeVelocity) / 4));
+  // No plan found: fallback to a conservative immediate burn
+  const v = Number(state.velocity) || 0;
+  const h = Number(state.altitude) || 0;
+  const needNowFallback = Math.max(0, Math.ceil((v + 2 - safeVelocity) / 4));
   const safetyMultiplier = h < 200 ? 2 : 1;
-  const planned = Math.min(available, Math.max(1, Math.ceil(neededNow2 * safetyMultiplier)));
+  const planned = Math.min(available, Math.max(1, Math.ceil(needNowFallback * safetyMultiplier)));
   return Math.min(available, planned);
 }
 
