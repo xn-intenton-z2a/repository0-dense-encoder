@@ -18,6 +18,6 @@ Notes
 
 Acceptance criteria
 
-- [ ] score returns 0 for traces ending with crashed true.
-- [ ] score returns a positive integer value for safe landings and follows the specified arithmetic.
-- [ ] Unit tests cover scoring for at least two safe landings and one crash and assert exact numeric results.
+- [x] score returns 0 for traces ending with crashed true.
+- [x] score returns a positive integer value for safe landings and follows the specified arithmetic.
+- [x] Unit tests cover scoring for at least two safe landings and one crash and assert exact numeric results.

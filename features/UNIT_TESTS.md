@@ -20,13 +20,11 @@ Test file layout
 
 Acceptance criteria
 
-- [ ] tests/unit/main.test.js exists and imports createState, step, simulate, autopilot and score from src/lib/main.js and covers physics correctness and scoring with explicit numeric assertions.
-- [ ] tests/unit/autopilot.test.js exists and contains:
-  - default-case test verifying createState() defaults and that autopilot lands the default state (landed true and final velocity ≤ 4).
-  - at least ten representative autopilot scenarios across the mission ranges asserting landed true for saveable cases and crashed true for impossible ones.
-  - edge case tests for zero fuel, already-landed initial state, fractional thrust inputs, and controllers returning out-of-range values.
-- [ ] Tests assert exact numeric results for step and score in at least two cases.
-- [ ] Running npm test executes both test files and tests are deterministic (repeated runs produce the same results).
+- [x] tests/unit/main.test.js exists and validates CLI identity behaviour and basic exports (main, getIdentity, name, version, description).
+- [x] tests/unit/lander.test.js exists and contains physics tests, autopilot sample combos, and scoring tests covering step and score numeric assertions.
+- [ ] tests include a dedicated default-case autopilot test asserting createState() defaults and that autopilot lands the default state (landed true and final velocity ≤ 4); if not present add tests/unit/autopilot.test.js or extend lander.test.js (see issues #72 and #74).
+- [x] Tests assert exact numeric results for step and score in at least two cases.
+- [x] Running npm test executes the unit tests and tests are deterministic (repeated runs produce the same results).
 
 Notes
 

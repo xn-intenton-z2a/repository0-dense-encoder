@@ -19,9 +19,9 @@ Provide a pure function step(currentState, thrustUnits) that returns a new state
 
 Acceptance criteria
 
-- [ ] step reduces fuel by the applied thrust and respects available fuel limits.
-- [ ] step adjusts velocity by thrust and gravity producing the expected net change.
-- [ ] step updates altitude consistent with velocity and clamps to zero on touchdown.
-- [ ] step sets landed true and crashed false for touchdown velocity ≤ 4, and crashed true otherwise.
-- [ ] step returns a new object and does not mutate the input state.
-- [ ] Tests exercise zero fuel, exact-fuel, fractional thrust input and touchdown cases.
+- [x] step reduces fuel by the applied thrust and respects available fuel limits.
+- [x] step adjusts velocity by thrust and gravity producing the expected net change.
+- [x] step updates altitude consistent with velocity and clamps to zero on touchdown.
+- [x] step sets landed true and crashed false for touchdown velocity ≤ 4, and crashed true otherwise.
+- [x] step returns a new object and does not mutate the input state.
+- [x] Tests exercise zero fuel, exact-fuel, fractional thrust input and touchdown cases.

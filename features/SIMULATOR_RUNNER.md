@@ -17,7 +17,7 @@ Behavioral requirements
 
 Acceptance criteria
 
-- [ ] simulate returns an array trace starting with the provided initial state and ending with a state whose landed or crashed flag is true.
-- [ ] simulate invokes the controller once per tick until landing or the max tick limit.
-- [ ] simulate handles controllers that return non-integer or out-of-range thrust values by clamping them.
-- [ ] Unit tests exercise simulate with a trivial controller, the autopilot controller, and a zero-thrust controller.
+- [x] simulate returns an array trace starting with the provided initial state and ending with a state whose landed or crashed flag is true.
+- [x] simulate invokes the controller once per tick until landing or the max tick limit.
+- [x] simulate handles controllers that return non-integer or out-of-range thrust values by clamping them.
+- [x] Unit tests exercise simulate with a trivial controller, the autopilot controller, and a zero-thrust controller.

@@ -16,8 +16,8 @@ API contract
 
 Acceptance criteria
 
-- [ ] createState() with no arguments returns altitude 1000, velocity 40, fuel 25, tick 0, landed false, crashed false.
-- [ ] createState allows overriding altitude, velocity and fuel and always sets tick to 0 and landed/crashed to false.
-- [ ] The returned value is a plain object with exactly the keys altitude, velocity, fuel, tick, landed, crashed.
-- [ ] The factory does not mutate the provided overrides object.
-- [ ] Tests import createState from src/lib/main.js and validate the contract.
+- [x] createState() with no arguments returns altitude 1000, velocity 40, fuel 25, tick 0, landed false, crashed false.
+- [x] createState allows overriding altitude, velocity and fuel and always sets tick to 0 and landed/crashed to false.
+- [x] The returned value is a plain object with exactly the keys altitude, velocity, fuel, tick, landed, crashed.
+- [x] The factory does not mutate the provided overrides object.
+- [x] Tests import createState from src/lib/main.js and validate the contract.
