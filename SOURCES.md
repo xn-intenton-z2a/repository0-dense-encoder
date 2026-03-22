@@ -33,5 +33,11 @@ Additional curated sources (implementation and tooling):
 - https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math
 - https://www.khanacademy.org/science/physics/one-dimensional-motion
 
+Newly added sources (PID implementations and optimal control reference):
+
+- https://www.npmjs.com/package/node-pid-controller
+- https://www.npmjs.com/package/pid-controller
+- https://en.wikipedia.org/wiki/Pontryagin%27s_minimum_principle
+
 Add URLs, papers, API docs, or other reference material here.
 The maintain-library workflow will process these into `library/` documents.
