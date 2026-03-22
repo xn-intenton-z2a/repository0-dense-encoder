@@ -2,14 +2,5 @@
 
 Reference material and documentation sources for this project.
 
-- https://en.wikipedia.org/wiki/Hamming_distance
-- https://en.wikipedia.org/wiki/Hamming_weight
-- https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Working_with_strings
-- https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/from
-- https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/BigInt
-- https://graphics.stanford.edu/~seander/bithacks.html#CountBitsSetKernighan
-- https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Bitwise_Operators
-- https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/codePointAt
-- https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/normalize
-- https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/@@iterator
-- https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/Segmenter
+Add URLs, papers, API docs, or other reference material here.
+The maintain-library workflow will process these into `library/` documents.
