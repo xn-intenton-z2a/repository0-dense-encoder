@@ -15,6 +15,6 @@ Example expectations
 
 Acceptance criteria
 
-- [ ] README.md contains a usage section that demonstrates simulate driven by the built-in autopilot.
-- [ ] README.md includes a short example trace demonstrating a successful landing that reviewers can validate by running the CLI or the example code.
-- [ ] The example is consistent with the library's exported API and the tests.
+- [ ] README.md contains a usage section that demonstrates simulate driven by the built-in autopilot (import createState, simulate, autopilot and run simulate(createState(), autopilot)).
+- [ ] README.md includes a reproducible example trace (6–12 states) for the default initial state showing altitude, velocity and fuel per state and final landed true with velocity ≤ 4. The example must be achievable by running the CLI or sample code.
+- [ ] README.md documents how to run tests (npm test) and points to tests/unit/autopilot.test.js for validation.
