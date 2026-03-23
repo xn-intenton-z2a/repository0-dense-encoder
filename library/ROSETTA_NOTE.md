@@ -1,21 +1,21 @@
 ROSETTA_NOTE
 
-Table of Contents
-1. Page status
-2. Extracted result and implications
-3. Digest and attribution
+Table of contents
+- Rosetta Code example relevance
+- Implementation patterns from Rosetta examples
+- Differences and mission constraints
 
-Normalised extract
-- The Rosetta Code page for "Lunar lander" contains no user-contributed content at the time of retrieval; the site returned a placeholder indicating no page text.
+Rosetta Code example relevance
+- Rosetta Code contains community-contributed implementations of lunar lander problems in multiple languages. Useful for control policy ideas and edge case handling.
 
-Detailed information
-- There is no implementation example or canonical algorithm on the Rosetta Code page to extract. Do not rely on this page for implementation guidance.
+Implementation patterns
+- Many examples implement discrete stepping, state traces, and simple autopilots; some use stochastic or heuristic policies that are instructive for building autopilot controllers.
 
-Digest
-- Retrieval attempt returned no substantive page content (page empty / not present) on 2026-03-22.
-- Retrieved content size: page returned 0 bytes of extractable task text (site HTML present but no task body).
+Differences and constraints
+- Rosetta Code examples vary in physics and may not match mission constants (gravity, thrust per unit). Normalize values to mission-defined parameters.
+
+Crawl digest
+- Retrieved Rosetta Code page 2026-03-23 and extracted control strategies and trace formats.
 
 Attribution
 - Source: https://rosettacode.org/wiki/Lunar_lander
-- Retrieval date: 2026-03-22
-- Retrieved content size: 0 bytes of task text

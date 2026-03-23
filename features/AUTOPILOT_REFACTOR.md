@@ -1,16 +1,17 @@
 # AUTOPILOT_REFACTOR
 
-# Summary
-Refactor the built-in autopilot into a pure, named export and improve testability and swapping ability.
+Summary
+The core autopilot was implemented and exported from src/lib/main.js; this feature has been converted into a maintenance task to make the autopilot tunable and to add deterministic tests that increase confidence for future refactors.
 
-# Scope
-- Make autopilotController a named export from src/lib/main.js
-- Ensure controller signature is (state, options?) -> integer thrustUnits and is deterministic
-- Provide an options object for tuning (e.g., margin, hysteresis) without internal side effects
-- Update simulate to accept controller as a parameter if not already doing so
+Scope
+- Expose an optional options object to the autopilot controller: autopilot(state, options)
+- Options should be a plain object with documented keys (example: margin, hysteresis, lookaheadLimit) and must not change default behaviour when omitted
+- Add unit tests that verify deterministic outputs when the same options and state sequences are provided
+- Add a short examples snippet (examples/default.js) demonstrating using the options object
+- Keep backward compatibility: existing callers that call autopilot(state) continue to work
 
-# Acceptance Criteria
-- autopilotController is exported as a named export and covered by unit tests
-- simulate accepts a controller parameter and behaves identically when autopilotController is supplied
-- Unit tests verify autopilotController lands safely with default initial conditions and across at least 10 configurations
-- Public API remains backwards-compatible except for clarified named exports; README updated with usage example
+Acceptance Criteria
+- autopilot accepts an optional second argument (options) and returns an integer thrustUnits when provided
+- Default behaviour is unchanged when options is omitted; existing unit tests continue to pass
+- Unit tests added to tests/unit/ which verify deterministic outputs for 5 example option sets
+- README updated with a short usage note describing the options object and linking to examples/default.js

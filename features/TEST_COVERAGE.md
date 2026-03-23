@@ -1,20 +1,14 @@
 # TEST_COVERAGE
 
-# Summary
-Increase unit test coverage and add focused tests to make maintenance safe and regression-resistant.
+Summary
+Increase and stabilise unit test coverage to make maintenance safe; add focused tests for boundary conditions and document coverage targets for contributors.
 
-# Scope
-Add unit tests covering:
-- step function physics (gravity and thrust updates)
-- simulate function producing a complete trace
-- autopilot safety for default initial conditions
-- autopilot safety across at least 10 different (altitude, velocity, fuel) combinations including edge cases
-- scoreLanding correctness for crashes and safe landings
-- edge cases: zero fuel, already landed, and thrust clamping
+Scope
+- Add unit tests for boundary and edge cases not yet exhaustively covered (large velocities, fuel-starvation scenarios, floating-point edge cases)
+- Document coverage targets: line >= 80%, branch >= 30% and instruct how to measure locally with Vitest
+- Optionally add a CI coverage check (documented as a follow-up change) that fails when thresholds are not met
 
-# Acceptance Criteria
-- Automated tests added to tests/unit/ verifying each bullet above
-- Running npm test passes and reports line coverage >= 80%
-- Tests assert exact state shape and immutability of state objects
-- Tests cover simulated terminal states (landed and crashed) and verify scoring formula
-- Tests are deterministic and runnable on Node.js >= 24 as per engines field
+Acceptance Criteria
+- New tests are added to tests/unit/ covering additional boundary cases and run successfully with npm test
+- Documentation in README or CONTRIBUTING.md explains how to run coverage locally and states the target thresholds
+- A follow-up CI plan to enforce coverage is described in the feature doc (implementation may be done in a subsequent change)

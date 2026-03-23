@@ -1,46 +1,33 @@
 PID_CONTROLLER
 
-Table of Contents
-1. PID formula (continuous)
-2. Discrete implementation (explicit formulas)
-3. Anti-windup and clamping
-4. Mapping controller output to discrete thrust units
-5. Reference signatures and usage notes
-6. Digest and attribution
+Table of contents
+- PID components and discrete implementation
+- Tuning methods (Ziegler–Nichols brief)
+- Use cases and limitations for lander
+- Implementation details and sample signatures
+- Supplementary and reference details
 
-Normalised extract (direct technical items)
-- PID controller (Proportional–Integral–Derivative) computes a control signal using three terms: proportional to current error, integral of past error, and derivative of error trend.
-- Continuous formula: u(t) = Kp * e(t) + Ki * integral_0^t e(τ) dτ + Kd * de(t)/dt
+PID components and discrete implementation
+- PID output = Kp*e + Ki*sum(e)*dt + Kd*(e - e_prev)/dt where e = setpoint - measurement.
+- For discrete ticks dt=1: output = Kp*e + Ki*sum_e + Kd*(e - e_prev)
+- Use controller to produce thrustUnitsRequested; map continuous PID output to integer thrust by rounding and clamping.
 
-Discrete implementation (dt = 1 tick recommended)
-- Use a discrete-time implementation where dt = 1 for per-tick simulation. Represent the controller with state {prevError, integral}.
-- Discrete formula (dt = 1):
-  - error = setpoint - measurement
-  - integral_next = integral + error * dt (apply clamping, see anti-windup)
-  - derivative = error - prevError
-  - u = Kp * error + Ki * integral_next + Kd * derivative
-- Map u (continuous) to thrust units by rounding and clamping: thrustUnits = clamp(round(u), 0, availableFuel)
+Tuning methods
+- Ziegler–Nichols provides heuristic gains based on observed oscillation period and gain; not guaranteed for this mission but useful starting point. See: https://en.wikipedia.org/wiki/Ziegler%E2%80%93Nichols_method
 
-Anti-windup and clamping
-- On actuator saturation clamp integral_next to [I_min, I_max] to prevent integral windup.
-- Alternative anti-windup: conditional integration (only integrate when output not saturated) or back-calculation.
+Use cases and limitations for lander
+- PID can smooth control and reduce oscillation vs bang-bang. However with integer-limited thrust and coarse per-tick impulses, PID may need anti-windup and output quantization handling.
 
-Tuning notes (practical)
-- Start with Kp small to avoid instability, add Kd to reduce overshoot, Ki to remove steady-state bias. Ziegler–Nichols is a quick heuristic but manual tuning or automated search (grid, binary search) works for discrete lander across parameter ranges.
+Implementation details and sample signatures
+- controllerPID factory: createPID({Kp, Ki, Kd, setpoint}) => function(state) => thrustUnits
+- Discrete internal state: integralSum, prevError
+- Anti-windup: clamp integralSum when actuator saturates
 
-Reference details (signatures)
-- pidInit(Kp, Ki, Kd) -> pidState
-  - pidState: {Kp:number, Ki:number, Kd:number, prevError:number=0, integral:number=0}
-- pidStep(pidState, setpoint:number, measurement:number, dt:number=1) -> {output:number, pidState}
-  - returns output (continuous), updated pidState (store prevError, integral)
-- mapOutputToThrust(output:number, fuel:number) -> integer thrustUnits
-  - clamp(round(output), 0, fuel)
+Reference details
+- Source: https://en.wikipedia.org/wiki/PID_controller and Ziegler–Nichols tuning page
 
-Digest (extracted and retrieval)
-- Extract (Wikipedia "Proportional–integral–derivative controller"): "A PID controller is a feedback-based control loop mechanism... P responds to present error, I to accumulated past error, D to predicted future error from rate of change..." (retrieved 2026-03-22)
-- Retrieved bytes: 108758 bytes (API extract response)
+Crawl digest
+- Retrieved 2026-03-23; extracted discrete PID formulas and tuning heuristics. Crawl size: ~410KB total across pages.
 
 Attribution
-- Source: https://en.wikipedia.org/wiki/PID_controller (Proportional–integral–derivative controller)
-- Retrieval date: 2026-03-22
-- Retrieved content size: 108758 bytes
+- Wikipedia: PID controller; Ziegler–Nichols method

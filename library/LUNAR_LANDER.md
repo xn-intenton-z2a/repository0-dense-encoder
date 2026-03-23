@@ -1,55 +1,56 @@
 LUNAR_LANDER
 
-Table of Contents
-1. Overview
-2. Key technical points (actionable)
-3. Landing stages (implementation notes)
-4. Discrete simulation guidance (explicit update equations)
-5. Reference API signatures (plain types)
-6. Digest (source extract and retrieval)
-7. Attribution and data size
+Table of contents
+- Mission physics summary
+- State object definition
+- Tick stepping algorithm
+- Simulation termination conditions
+- Scoring function
+- Supplementary details
+- Reference details
+- Crawl digest and attribution
 
-Normalised extract (direct technical items)
-- No atmosphere on the Moon: aerobraking is not available; descent must use propulsion to decelerate.
-- Typical landing stages: descent orbit insertion; descent and braking via propulsion; final approach with fine adjustments; touchdown where engines may be cut shortly before contact to avoid regolith damage.
-- Engines and landing gear: engines provide all deceleration; landing mechanisms are designed to survive a small uncontrolled fall after engine cutoff.
-- Design constraints: high gravity relative to small bodies and the lack of atmosphere increase fuel requirements and require precise thrust management.
+Mission physics summary
+- Discrete-time 1D vertical descent.
+- Per-tick operations in order: controller selects thrustUnits (integer, clamped to available fuel), fuel is reduced by thrustUnits, gravity adds +2 m/s to velocity (downward), thrust reduces velocity by 4 m/s per unit burned (upward), altitude reduced by velocity after forces applied.
+- Initial defaults: altitude=1000 m, velocity=40 (downward positive), fuel=25, gravity per tick=+2 m/s, thrust per fuel unit=4 m/s.
+- Landing when altitude<=0; safe if landingVelocity <=4 m/s, crash otherwise.
 
-Detailed information for items above
-- No atmosphere implies all deceleration is achieved via thrust; so simulation must model thrust-induced delta-v per actuation and continuous gravity-induced acceleration per tick.
-- Landing stages map to simulation phases: (a) approach (high-speed deceleration), (b) precision approach (fine control to achieve target touchdown velocity), (c) touchdown (engines often cut and landing gear absorbs remaining energy).
-- Touchdown safety: real systems often cut engines a few meters above ground to avoid ejecta; landing gear must tolerate the residual drop. In a discrete simulation, mark landed when altitude <= 0 and evaluate landing velocity to decide safe vs crash.
+State object definition
+- Plain JS object with keys: altitude (number, meters), velocity (number, m/s, positive downward), fuel (integer, units), tick (integer), landed (boolean), crashed (boolean).
+- States are immutable: stepping returns a new object.
 
-Supplementary details (implementation-ready)
-- Constants used in mission: gravity_per_tick = 2 (m/s per tick, increases downward speed); delta_v_per_fuel_unit = 4 (m/s reduction per fuel unit burned in the tick); safe_touchdown_velocity = 4 (m/s or less = safe).
-- Discrete step (dt = 1 tick):
-  velocity_next = velocity + gravity_per_tick - (thrustUnits * delta_v_per_fuel_unit)
-  altitude_next = altitude - velocity_next
-  fuel_next = fuel - thrustUnits (clamped to >= 0)
-  tick_next = tick + 1
-  landed = altitude_next <= 0 and abs(velocity_next) <= safe_touchdown_velocity
-  crashed = altitude_next <= 0 and abs(velocity_next) > safe_touchdown_velocity
-  altitude_next_report = max(0, altitude_next)
-- Notes: apply thrust clamped to available fuel; treat velocity as "toward surface" positive so altitude decreases by velocity each tick; detect landing at the first tick where altitude_next <= 0 and record the impact velocity as velocity_next.
+Tick stepping algorithm
+- Input: state, thrustUnitsRequested (int)
+- thrust = clamp(thrustUnitsRequested, 0, state.fuel)
+- newFuel = state.fuel - thrust
+- v_after_gravity = state.velocity + 2
+- v_after_thrust = v_after_gravity - 4*thrust
+- newAltitude = state.altitude - v_after_thrust
+- If newAltitude <= 0 then set landed=true and compute landingVelocity = Math.max(0, v_after_thrust) and set crashed = landingVelocity>4
+- Increment tick by 1
+- Return new state object
 
-Reference details (API signatures and types)
-- State shape (plain JS object): { altitude: number, velocity: number, fuel: number, tick: number, landed: boolean, crashed: boolean }
-- step(state, thrustUnits) -> State
-  - params: state: State, thrustUnits: integer (0..state.fuel)
-  - returns: new immutable State as described above
-- simulate(initialState, controller) -> State[]
-  - params: initialState: State, controller: function(state: State) -> integer (thrustUnits)
-  - returns: array of State objects representing each tick from start to landed/crashed terminal state
-- autopilot(state) -> integer (thrustUnits)
-  - built-in controller must accept state and return thrustUnits (integer). Controller must never throw; returning 0 is allowed.
-- scoreLanding(initialFuel: number, finalFuel: number, landingVelocity: number) -> number
-  - returns 0 for crash; otherwise (initialFuel - finalFuel) * 10 + Math.max(0, (4 - landingVelocity) * 25)
+Simulation termination
+- Continue stepping until state.landed===true or state.crashed===true or tick exceeds a high cap (e.g., 10000) to avoid infinite loops.
 
-Digest (extracted source content and retrieval)
-- Extract (Wikipedia, first paragraphs): "A lunar lander or Moon lander is a spacecraft designed to land on the surface of the Moon... The relatively high gravity and lack of lunar atmosphere negates the use of aerobraking, so a lander must use propulsion to decelerate and achieve a soft landing." (retrieved 2026-03-22)
-- Retrieved bytes: 19357 bytes (API extract response)
+Scoring function
+- If crashed return 0
+- Otherwise return (initialFuel - fuelRemaining) * 10 + Math.max(0, (4 - landingVelocity) * 25)
+
+Supplementary details
+- Use integer thrust units; controller function signature: (state) => thrustUnitsRequested (integer)
+- Use Math.max/Math.min to clamp values and ensure fuel not negative
+- Use defensive checks: if state.landed or state.crashed, controller should be ignored and simulation should return the trace immediately
+
+Reference details
+- Implementation patterns: step is pure function: step(state, thrustUnits) => newState. simulate(initialState, controller) => traceArray.
+- Export as named exports from src/lib/main.js: createState, step, simulate, autopilot, scoreLanding
+- Edge cases: zero fuel -> thrust always 0; already landed -> simulation returns initial state in trace.
+
+Crawl digest
+- Sources consulted from SOURCES.md on 2026-03-23: Wikipedia Lunar lander, Rosetta Code lunar lander, control theory pages, Euler method. Extracted mission-specific physics from repository MISSION.md and normalized into the step definitions.
 
 Attribution
-- Source: https://en.wikipedia.org/wiki/Lunar_lander (Wikipedia: "Lunar lander")
-- Retrieval date: 2026-03-22
-- Retrieved content size: 19357 bytes
+- Data retrieved from: https://en.wikipedia.org/wiki/Lunar_lander (HTML crawl), https://rosettacode.org/wiki/Lunar_lander
+- Crawl size: multiple pages fetched; see library files for per-source digests.

@@ -1,14 +1,15 @@
 # DOCS_EXAMPLES
 
-# Summary
-Add runnable examples and a concise README snippet showing a successful landing trace.
+Summary
+A minimal README example exists, but runnable example scripts are missing. Provide a small examples directory with a copy-pasteable default script and a simple benchmark script so contributors can reproduce behaviour locally.
 
-# Scope
-- Add examples/ simple script demonstrating default simulation and printing the trace
-- Update README with a short usage example showing initial state, controller usage, and final trace summary
-- Ensure examples use only exported API from src/lib/main.js
+Scope
+- Create examples/default.js that imports the public API and prints a simulation trace for default initial conditions
+- Create examples/bench.js that runs N randomized simulations and prints simple timing statistics (median tick count, median time)
+- Update README to link to examples and include a short sample output matching examples/default.js
 
-# Acceptance Criteria
-- README contains a minimal example that can be copy-pasted and run with node
-- examples/default.js added that reproduces the README example and prints final landed state
-- Example output in README shows a successful landing trace for default initial conditions
+Acceptance Criteria
+- examples/default.js is present and executable with node; when run it prints an array-like trace or summary consistent with README
+- examples/bench.js is present and executable with node and prints timing and tick statistics for a configurable N
+- README links to the examples directory and shows sample output for the default example
+- tests/unit include a check for the presence of example files (or this is documented as a follow-up test change)

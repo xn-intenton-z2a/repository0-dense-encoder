@@ -1,36 +1,35 @@
 EULER_METHOD
 
-Table of Contents
-1. Method definition and order
-2. Discrete update formulas for 1D lander physics
-3. Numerical considerations
-4. Reference signatures
-5. Digest and attribution
+Table of contents
+- Purpose in simulation
+- Forward Euler discrete integration steps
+- Error characteristics and stability
+- Implementation notes for 1D lander
+- Supplementary and reference details
 
-Normalised extract (direct technical items)
-- The Euler method (forward Euler) is a first-order explicit numerical integrator for ODEs: y_{n+1} = y_n + f(t_n, y_n) * dt. Local truncation error is O(dt^2) and global error O(dt).
+Purpose in simulation
+- Use Forward Euler to integrate velocity and altitude over discrete ticks when using continuous forces.
+- For this mission the per-tick velocity update is explicit (velocity += gravity - thrustEffect) and altitude is updated using new velocity.
 
-Discrete update formulas (applied to lander model, dt = 1 tick)
-- Let gravity_per_tick = g, thrustDeltaV = thrustUnits * dv_per_unit.
-- Acceleration a = -thrustDeltaV (instant velocity reduction from thrust considered as immediate delta-v) plus gravity increment treated as an additive velocity change per tick. For mission model use the specified discrete updates:
-  - velocity_next = velocity + gravity_per_tick - (thrustUnits * dv_per_unit)
-  - altitude_next = altitude - velocity_next
-- Because the mission uses a per-tick discrete model (effectively dt = 1), the Euler update equates to applying the per-tick velocity increment directly; this is consistent with forward-Euler semantics for f = acceleration.
+Forward Euler discrete integration steps
+- Given state variables at tick t: altitude_t, velocity_t
+- velocity_{t+1} = velocity_t + a*dt where dt=1 tick and a is net acceleration (gravity - thrustAcceleration)
+- altitude_{t+1} = altitude_t - velocity_{t+1}
 
-Numerical considerations
-- Euler is simplest and sufficient for this per-tick, event-driven simulation; be aware of integration error if fractional sub-ticks or smaller dt are introduced. For high-accuracy continuous models, prefer higher-order RK methods.
-- When altitude crosses zero, stop simulation and use the impact velocity computed at that tick; optionally compute a fractional sub-step to estimate exact impact velocity if higher fidelity is required.
+Error characteristics and stability
+- Euler is first-order accurate (O(dt)). For dt=1 ticks, errors are coarse but acceptable for the simplified discrete model.
+- For stiff or high-precision needs, use smaller dt or higher-order integrators; here the mission defines gravity and thrust as per-tick discrete updates so Euler is the appropriate match.
 
-Reference details (signatures)
-- integrateEuler(state, computeAcceleration, dt=1) -> newState
-  - computeAcceleration(state) -> acceleration (m/s^2) or delta_v for dt
-- step(state, thrustUnits) -> newState (uses Euler formulas given above)
+Implementation notes for 1D lander
+- Use dt=1; treat gravityFixed=2 m/s per tick as acceleration contribution.
+- Thrust is modelled as an immediate change in velocity: v_new = v_old + gravity - thrustUnit*4
+- Perform fuel consumption before applying thrust to ensure clamps are correct.
 
-Digest (extracted and retrieval)
-- Extract (Wikipedia "Euler method"): "The Euler method is a first-order numerical procedure for solving ODEs with a given initial value... it is the most basic explicit method..." (retrieved 2026-03-22)
-- Retrieved bytes: 83757 bytes (API extract response)
+Reference details
+- Euler method summary and formulae from: https://en.wikipedia.org/wiki/Euler_method
+
+Crawl digest
+- Retrieved Euler method page on 2026-03-23; extracted discrete-time formulas and matched with mission tick semantics. Crawl size: ~120KB HTML.
 
 Attribution
-- Source: https://en.wikipedia.org/wiki/Euler_method
-- Retrieval date: 2026-03-22
-- Retrieved content size: 83757 bytes
+- Source: Wikipedia — Euler method
