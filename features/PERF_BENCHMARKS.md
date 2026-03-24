@@ -19,4 +19,8 @@ Implementation Notes
 - Use performance.now() or process.hrtime.bigint() for timing; keep the script dependency-free.
 - Benchmarks are for local use only — not required in CI.
 
+Status
+
+Open — benchmark script is a requested maintenance addition and not yet present in the repository.
+
 ---

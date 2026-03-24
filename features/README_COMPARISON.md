@@ -6,8 +6,7 @@ Keep the README comparison table accurate and reproducible by deriving numbers f
 
 Goals
 
-- Ensure README.md contains a comparison table that lists Encoding, Charset size, Bits/char, and UUIDLength for the canonical UUID.
-- Provide a short note describing how the numbers were measured (no padding, URL-safe variants when applicable).
+- Ensure README.md contains a comparison table that lists Encoding, Charset size, Bits/char, and UUIDLength for the canonical UUID fixture.
 
 Acceptance Criteria
 
@@ -17,6 +16,6 @@ Acceptance Criteria
 
 Status
 
-Implemented: table present in README.md; keep this feature as a maintenance task to ensure the table is refreshed when encodings change.
+Done — the comparison table exists in README.md and matches the current encodings. Keep this feature as a maintenance task to refresh when encodings change.
 
 ---

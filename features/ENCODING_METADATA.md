@@ -2,7 +2,7 @@
 
 Overview
 
-Ensure encodings expose consistent metadata so README, UI, and tests can derive density numbers without encoding sample data.
+Ensure encodings expose consistent metadata so README, UI, and tests can derive density numbers without sampling encoded data.
 
 Goals
 
@@ -10,17 +10,21 @@ Goals
 
 Acceptance Criteria
 
-- listEncodings returns an array of objects with fields:
+- listEncodings() returns an array of objects with fields:
   - name: string
-  - bitsPerChar: number (rounded to two decimal places for display)
+  - bitsPerChar: number (display rounded to two decimal places)
   - charsetSize: integer
   - urlSafe: boolean
   - charsetPreview: string (first 6 characters or an abbreviated sample)
-- bitsPerChar is computed from charsetSize as log2(charsetSize) and rounded to two decimal places for presentation; tests may accept a small numeric tolerance (±0.01).
-- Unit tests (tests/unit/metadata.test.js) assert that base62, base85, and base91 appear with expected charset sizes and that bitsPerChar is in the expected range.
+- bitsPerChar is computed from charsetSize as log2(charsetSize) and is represented to two decimal places for display; tests may assert a tolerance of ±0.01.
+- Unit tests in tests/unit/metadata.test.js assert that base62, base85, and base91 appear with expected charset sizes and that bitsPerChar is within expected ranges.
 
 Implementation Notes
 
-- Keep listEncodings fast and side-effect free; derive display values rather than mutating registry entries.
+- listEncodings must be side-effect free and fast; derive display values rather than mutating registry entries.
+
+Status
+
+Done — listEncodings and metadata tests have been implemented (see closed issue #114). Keep this feature to ensure future encodings populate the metadata correctly.
 
 ---
