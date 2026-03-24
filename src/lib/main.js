@@ -52,9 +52,30 @@ if (isNode) {
 
 const registry = new Map();
 
-function registerEncoding(name, charset) {
+function validateCharset(charset) {
+  if (typeof charset !== 'string') throw new TypeError('charset must be a string');
+  const chars = Array.from(charset);
+  if (chars.length < 2) throw new Error('charset must contain at least 2 characters');
+  const seen = new Set();
+  const ambiguous = new Set(['0', 'O', '1', 'l', 'I']);
+  for (const c of chars) {
+    if (c === ' ') throw new Error('charset contains space (U+0020)');
+    const code = c.codePointAt(0);
+    if (!Number.isFinite(code) || code < 33 || code > 126) throw new Error('charset contains invalid (non-printable) character: ' + c);
+    if (ambiguous.has(c)) throw new Error('charset contains ambiguous character: ' + c);
+    if (seen.has(c)) throw new Error('charset contains duplicate character: ' + c);
+    seen.add(c);
+  }
+  return chars;
+}
+
+function registerEncoding(name, charset, opts = {}) {
   if (typeof name !== 'string' || name.length === 0) throw new TypeError('encoding name required');
-  if (typeof charset !== 'string' || charset.length < 2) throw new TypeError('charset must be a string with at least 2 characters');
+  if (typeof charset !== 'string') throw new TypeError('charset must be a string with at least 2 characters');
+  if (!opts.skipValidation) {
+    // Will throw on invalid charsets
+    validateCharset(charset);
+  }
   const chars = Array.from(charset);
   const unique = new Set(chars);
   if (unique.size !== chars.length) throw new Error('charset contains duplicate characters');
@@ -150,18 +171,7 @@ function decode(encodingName, text) {
 
 function createEncodingFromCharset(charset, name) {
   if (typeof charset !== 'string') throw new TypeError('charset must be a string');
-  // validation: printable ASCII U+0021–U+007E (33..126), no control chars, no space
-  const chars = Array.from(charset);
-  if (chars.length < 2) throw new Error('charset must contain at least 2 characters');
-  const seen = new Set();
-  const ambiguous = new Set(['0', 'O', '1', 'l', 'I']);
-  for (const c of chars) {
-    const code = c.codePointAt(0);
-    if (!Number.isFinite(code) || code < 33 || code > 126) throw new Error('charset contains invalid (non-printable) character: ' + c);
-    if (ambiguous.has(c)) throw new Error('charset contains ambiguous character: ' + c);
-    if (seen.has(c)) throw new Error('charset contains duplicate character: ' + c);
-    seen.add(c);
-  }
+  const chars = validateCharset(charset);
   const encName = typeof name === 'string' && name.length ? name : `custom-${chars.length}`;
   return registerEncoding(encName, chars.join(''));
 }
@@ -187,17 +197,19 @@ function decodeUUID(encodingName, encoded) {
 }
 
 // ─────────────── Built-in Encodings ───────────────
-// base62 (alphanumeric)
-registerEncoding('base62', '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ');
+// base62 (alphanumeric) — keep legacy ordering and characters
+registerEncoding('base62', '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', { skipValidation: true });
 // base85 (Z85-like)
-registerEncoding('base85', '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ.-:+=^!/*?&<>()[]{}@%$#');
+registerEncoding('base85', '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ.-:+=^!/*?&<>()[]{}@%$#', { skipValidation: true });
 // base91 (basE91-like)
-registerEncoding('base91', 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!#$%&()*+,./:;<=>?@[]^_`{|}~"');
-// high-density printable ASCII (33-126)
+registerEncoding('base91', 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!#$%&()*+,./:;<=>?@[]^_`{|}~"', { skipValidation: true });
+// high-density printable ASCII excluding ambiguous characters -> densest
 const printable = Array.from({ length: 94 }, (_, i) => String.fromCharCode(33 + i)).join('');
-registerEncoding('ascii94', printable);
+const ambiguousSet = new Set(['0', 'O', '1', 'l', 'I']);
+const printableFiltered = Array.from(printable).filter(c => !ambiguousSet.has(c)).join('');
+createEncodingFromCharset(printableFiltered, 'densest');
 
-export { registerEncoding as registerEncoding };
+export { registerEncoding };
 export { listEncodings };
 export { encode, decode, createEncodingFromCharset };
 export { encodeUUID, decodeUUID };
