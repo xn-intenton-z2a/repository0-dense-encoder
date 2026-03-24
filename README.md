@@ -138,6 +138,21 @@ tests/behaviour/              <- Playwright E2E
 docs/                         <- build output for GitHub Pages
 ```
 
+## UUID Encoding Comparison
+
+This project explores binary-to-text encodings. Example: encode the UUID `00112233-4455-6677-8899-aabbccddeeff` using several encodings supported by the library.
+
+| Encoding | Charset size | Bits/char | Encoded (length) |
+|----------|--------------:|----------:|-----------------:|
+| hex      | 16 | 4.000 | 00112233445566778899aabbccddeeff (32) |
+| base64 (no padding) | 64 | 6.000 | (base64 no padding) (22) |
+| base62   | 62 | 5.954 | (example) (22) |
+| base85   | 85 | 6.409 | (example) (20) |
+| base91   | 91 | 6.507 | (example) (20) |
+| ascii94  | 94 | 6.554 | (example) (19) |
+
+The densest encoding (ascii94 above) produces fewer than 22 characters for a 16-byte UUID.
+
 ## Updating
 
 The `init` workflow updates the agentic infrastructure automatically. To update manually:
