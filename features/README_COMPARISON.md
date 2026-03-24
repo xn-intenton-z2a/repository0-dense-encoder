@@ -2,22 +2,21 @@
 
 Overview
 
-Add a clear, reproducible UUID encoding comparison table to README.md that demonstrates encoded lengths and charset characteristics for each built-in encoding and a representative densest custom encoding.
+Keep the README comparison table accurate and reproducible by deriving numbers from listEncodings results and a deterministic UUID fixture.
 
 Goals
 
-- Make it straightforward for maintainers and users to compare encoding density and chosen charsets.
-- Show a canonical UUID sample and the measured encoded lengths for each encoding.
+- Ensure README.md contains a comparison table that lists Encoding, Charset size, Bits/char, and UUIDLength for the canonical UUID.
+- Provide a short note describing how the numbers were measured (no padding, URL-safe variants when applicable).
 
 Acceptance Criteria
 
-- README.md contains a comparison table with columns: Encoding, Charset (description), BitsPerChar, CharsetSize, UUIDLength (16-byte UUID length), and Notes.
-- Table includes entries for: hex (baseline 32), base64 (no padding, baseline 22), base62, base85, base91, and a representative densest custom encoding.
-- The README includes the canonical UUID sample used for measurements and a brief note describing how lengths were measured (no padding, URL-safe where applicable).
+- README.md contains a comparison table with entries for: hex, base64 (no padding), base62, base85, base91, and ascii94 (or the chosen densest encoding).
+- The table values are derivable from listEncodings and the canonical fixture 00112233-4455-6677-8899-aabbccddeeff; documentation describes measurement method.
+- If the README table is out of date, a small script or maintainer action is documented for how to refresh it from metadata.
 
-Implementation Notes
+Status
 
-- Add the table under a Usage or Comparison section in README.md.
-- Use a deterministic UUID fixture for the sample (hex bytes explicitly written) so results are reproducible.
+Implemented: table present in README.md; keep this feature as a maintenance task to ensure the table is refreshed when encodings change.
 
 ---

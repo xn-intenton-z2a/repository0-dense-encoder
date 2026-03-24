@@ -2,22 +2,21 @@
 
 Overview
 
-Add a small, reproducible benchmark script to measure encode/decode performance for a 16-byte UUID and a few common input sizes. The goal is maintenance-facing: small regressions are visible and performance-sensitive paths can be prioritised.
+Add a lightweight benchmark script so maintainers can re-run a quick performance baseline for encode/decode paths locally.
 
 Goals
 
-- Provide an examples/benchmarks script runnable with node that reports mean time per encode/decode for each encoding.
-- Collect and document a baseline result and make it easy to re-run locally.
+- Provide a single-file benchmark under examples/benchmarks/benchmark.js that can be run with node and reports average encode/decode times for a 16-byte UUID and a few larger inputs.
 
 Acceptance Criteria
 
-- A benchmark script is provided under examples/benchmarks/benchmark.js (implementation task for a follow-up change) and is runnable with node.
-- The feature spec documents how to run the benchmark: node examples/benchmarks/benchmark.js --runs 1000.
-- The README or docs include the recorded baseline numbers and a note describing how to interpret the results.
+- examples/benchmarks/benchmark.js exists and accepts a --runs N argument (default 1000).
+- The script measures and prints mean and median times (in microseconds) for encode and decode for each built-in encoding.
+- README documents how to run the benchmark and records the repository baseline numbers (optional manual update accepted).
 
 Implementation Notes
 
-- Keep the benchmark lightweight: synchronous runs with process.hrtime.bigint or performance.now and no external dependencies.
-- Benchmarks are optional in CI but should be runnable locally by contributors.
+- Use performance.now() or process.hrtime.bigint() for timing; keep the script dependency-free.
+- Benchmarks are for local use only — not required in CI.
 
 ---

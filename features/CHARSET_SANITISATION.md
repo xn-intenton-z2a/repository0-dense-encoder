@@ -2,22 +2,33 @@
 
 Overview
 
-Ensure custom character-set creation and validation enforce printable, non-ambiguous characters and deterministic behaviour. Prevent control characters, space, and visually ambiguous characters from entering custom charsets.
+Ensure charset handling is safe, deterministic, and well-documented. The codebase must both validate incoming custom charsets and provide a small helper that deterministically sanitises a charset string into a canonical form when requested.
 
 Goals
 
-- Centralise charset validation logic used by createEncoding or equivalent factory.
-- Provide deterministic sanitisation behavior: remove duplicates and normalise ordering in a documented way.
+- Provide a public sanitizeCharset(charset: string): string helper that returns a deterministic, clean charset string.
+- Maintain strict validation for createEncodingFromCharset by default; offer an optional sanitise flag to accept and clean input instead of throwing.
+- Document exactly which characters are disallowed and how duplicates and ordering are handled.
 
 Acceptance Criteria
 
-- A validation rule set is defined and documented: charset must be a string of printable ASCII characters in range U+0021 to U+007E excluding space, control characters, and the ambiguous characters: 0, O, 1, l, I.
-- createEncoding throws a clear error for invalid charsets (too short, includes disallowed chars) and returns a deterministic charset for valid input (duplicates removed, stable order).
-- Unit tests verify that invalid charsets are rejected, valid charsets are normalised, and the sanitisation rules are documented in README.
+- The library exposes sanitizeCharset(charset: string): string which:
+  - Removes any character outside U+0021..U+007E (printable ASCII excluding space).
+  - Removes visually ambiguous characters: 0, O, 1, l, I.
+  - Removes duplicate characters but preserves the first-seen order (canonicalisation is stable).
+  - Returns a string length >= 2 for valid results; otherwise throws a clear error.
+- createEncodingFromCharset accepts an optional options object { name?, sanitize?: boolean }:
+  - When sanitize is true it uses sanitizeCharset to derive a canonical charset and registers it;
+  - When sanitize is false (default) it validates strictly and throws on invalid input.
+- Unit tests cover sanitizeCharset behaviour (duplicates, ambiguous chars, control chars, space) and createEncodingFromCharset with sanitize true/false paths.
 
 Implementation Notes
 
-- Implement a small helper sanitizeCharset and add tests in tests/unit/charset.test.js.
-- Document the sanitisation behaviour in the README section that covers custom encodings.
+- Keep sanitisation deterministic and well-documented; tests must rely on a deterministic canonical form.
+- Tests should live in tests/unit/charset.test.js and import only public API.
+
+Status
+
+Open — validation exists in src/lib/main.js but sanitizeCharset and optional sanitize path are not yet implemented.
 
 ---

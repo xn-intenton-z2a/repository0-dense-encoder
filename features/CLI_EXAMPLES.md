@@ -2,24 +2,24 @@
 
 Overview
 
-Provide small, practical examples and documentation for using the library from the command line so contributors can quickly exercise encode/decode and length-comparison scenarios without writing new JS files from scratch.
+Provide small, dependency-free CLI examples so contributors can exercise the public API quickly without writing new code.
 
 Goals
 
-- Add an examples/cli/README.md that documents how to run the library's CLI entrypoint and what example scripts are available.
-- Add lightweight example scripts under examples/cli that demonstrate common tasks: encode a fixed 16-byte UUID with all built-in encodings and print lengths; decode an encoded string back to bytes; run a simple comparison of built-in encodings for a canonical UUID.
-- Ensure examples use the public named exports and no external dependencies.
+- Add examples/cli/ with a README and two tiny scripts demonstrating encode and decode flows.
+- Scripts must use the public named exports only and print deterministic output for a canonical UUID fixture.
 
 Acceptance Criteria
 
-- examples/cli/README.md exists and documents the available example scripts and a one-line example invocation for each, with expected deterministic outputs for the canonical UUID fixture.
-- examples/cli/encode-sample.js (or encode-sample.mjs) demonstrates encoding a fixed 16-byte UUID and prints the encoded string and its length for each built-in encoding.
-- Project README includes a short pointer to examples/cli and a single example command that a contributor can copy-paste to run the sample.
-- Running the example script produces deterministic output for the canonical UUID fixture (manual verification accepted).
+- examples/cli/README.md documents the example scripts and how to run them (node file).
+- examples/cli/encode-sample.mjs encodes the canonical UUID 00112233-4455-6677-8899-aabbccddeeff with each built-in encoding and prints: encoding name, encoded string, length.
+- examples/cli/decode-sample.mjs demonstrates decoding an encoded value back to a UUID string and prints the round-tripped UUID.
+- README at project root contains a short, copy-pasteable example invoking the encode-sample script.
+- Examples are deterministic and dependency-free (use Node 24+ ESM only).
 
 Implementation Notes
 
-- Keep scripts dependency-free and small; they are documentation and smoke-checks rather than full tests.
-- Use the library's public API only and avoid importing internal modules.
+- Keep scripts tiny (<= 100 lines) and use the public API: listEncodings, encodeUUID, decodeUUID.
+- Examples are documentation first — they may be run manually rather than run in CI.
 
 ---

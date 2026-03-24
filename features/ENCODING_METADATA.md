@@ -2,22 +2,25 @@
 
 Overview
 
-Ensure the library exposes a consistent encoding metadata API so callers can list available encodings and their density characteristics programmatically.
+Ensure encodings expose consistent metadata so README, UI, and tests can derive density numbers without encoding sample data.
 
 Goals
 
-- Provide a listEncodings function (or ensure existing function does this) that returns metadata objects for each encoding.
-- Metadata should enable UI and README generation without executing an encode on sample data.
+- listEncodings() returns structured metadata for each registered encoding so UIs and docs can compute densities and render comparison tables.
 
 Acceptance Criteria
 
-- listEncodings returns an array of objects with at minimum these fields: name (string), bitsPerChar (number), charsetSize (integer), urlSafe (boolean), and charsetPreview (string or short sample).
-- Unit tests assert that base62, base85 and base91 appear in the list with expected charset sizes and bitsPerChar within a small tolerance of the documented values.
-- The README comparison table is derivable from this metadata.
+- listEncodings returns an array of objects with fields:
+  - name: string
+  - bitsPerChar: number (rounded to two decimal places for display)
+  - charsetSize: integer
+  - urlSafe: boolean
+  - charsetPreview: string (first 6 characters or an abbreviated sample)
+- bitsPerChar is computed from charsetSize as log2(charsetSize) and rounded to two decimal places for presentation; tests may accept a small numeric tolerance (±0.01).
+- Unit tests (tests/unit/metadata.test.js) assert that base62, base85, and base91 appear with expected charset sizes and that bitsPerChar is in the expected range.
 
 Implementation Notes
 
-- Keep bitsPerChar calculated from charsetSize using log2(charsetSize) and rounded to two decimal places for display.
-- Add tests in tests/unit/metadata.test.js to assert contents and shapes.
+- Keep listEncodings fast and side-effect free; derive display values rather than mutating registry entries.
 
 ---
