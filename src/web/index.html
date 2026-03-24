@@ -41,8 +41,8 @@
       document.getElementById('demo-output').textContent = JSON.stringify({ name, version, description }, null, 2);
       document.title = name + ' v' + version;
 
-      // build a small comparison table for a sample UUID
-      const uuid = '00112233-4455-6677-8899-aabbccddeeff';
+      // build a small comparison table for a sample v7 UUID
+      const uuid = '0181b3b4-1f2e-7f00-8c3a-5fb3c2d8a1b2';
       const encs = listEncodings();
       const table = document.createElement('table');
       table.id = 'encoding-table';

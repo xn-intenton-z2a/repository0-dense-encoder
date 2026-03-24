@@ -49,7 +49,6 @@ agentic-lib ships with 20 built-in missions plus two special modes, graded using
 | `1-kyu-create-ray-tracer` | 1 kyu | Ray tracer |
 | `1-dan-create-c64-emulator` | 1 dan | C64 emulator |
 | `1-dan-create-planning-engine` | 1 dan | Planning engine |
-| `2-dan-create-self-hosted` | 2 dan | Self-hosted AGI vision |
 
 List all available missions:
 
@@ -112,8 +111,6 @@ The pipeline runs as GitHub Actions workflows. An LLM supervisor gathers reposit
 
 ## Configuration
 
-Edit `agentic-lib.toml` to tune the system:
-
 ```toml
 [schedule]
 supervisor = "off"          # off | weekly | daily | hourly | continuous
@@ -140,18 +137,18 @@ docs/                         <- build output for GitHub Pages
 
 ## UUID Encoding Comparison
 
-This project explores binary-to-text encodings. Example: encode the UUID `00112233-4455-6677-8899-aabbccddeeff` using several encodings supported by the library.
+This project explores binary-to-text encodings. Example: encode the UUID `0181b3b4-1f2e-7f00-8c3a-5fb3c2d8a1b2` (a v7 sample) using several encodings supported by the library.
 
 | Encoding | Charset size | Bits/char | Encoded (length) |
 |----------|--------------:|----------:|-----------------:|
-| hex      | 16 | 4.000 | 00112233445566778899aabbccddeeff (32) |
+| hex      | 16 | 4.000 | 0181b3b41f2e7f008c3a5fb3c2d8a1b2 (32) |
 | base64 (no padding) | 64 | 6.000 | (base64 no padding) (22) |
 | base62   | 62 | 5.954 | (example) (22) |
 | base85   | 85 | 6.409 | (example) (20) |
 | base91   | 91 | 6.507 | (example) (20) |
-| ascii94  | 94 | 6.554 | (example) (19) |
+| densest  | 89 | 6.475 | (example) (20) |
 
-The densest encoding (ascii94 above) produces fewer than 22 characters for a 16-byte UUID.
+The densest encoding (densest above) produces fewer than 22 characters for a 16-byte UUID.
 
 ## Updating
 
