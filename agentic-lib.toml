@@ -6,8 +6,7 @@
 # During init:
 
 [schedule]
-supervisor = "off"       # off | weekly | daily | hourly | continuous
-model = "gpt-5-mini"
+supervisor = "hourly"       # off | weekly | daily | hourly | continuous
 focus = "maintenance"                 # mission | maintenance
 
 [paths]
@@ -181,7 +180,7 @@ total = 7
 7 = { text = "README shows UUID encoding comparison table", met = false }
 
 [init]
-timestamp = "2026-03-23T09:16:39.957Z"
+timestamp = "2026-03-24T09:19:09.440Z"
 mode = "purge"
 mission = "4-kyu-apply-dense-encoding"
 mission-type = "4-kyu-apply-dense-encoding"
