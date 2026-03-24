@@ -4,15 +4,15 @@ Reference material and documentation sources for this project. Prioritised: dens
 
 Curl-prioritised extraction order (top-first):
 
-- https://www.rfc-editor.org/rfc/rfc4648.html  # Base16/Base32/Base64 RFC (padding, alphabet variants)
-- https://datatracker.ietf.org/doc/html/rfc4122  # UUID format and canonical representation
+- https://www.rfc-editor.org/rfc/rfc4648.txt  # Base16/Base32/Base64 RFC (padding, alphabet variants)
+- https://www.rfc-editor.org/rfc/rfc4122.txt  # UUID format and canonical representation
+- https://www.rfc-editor.org/rfc/rfc1924.txt  # Compact representation example (base85-style)
 - https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array
 - https://nodejs.org/api/buffer.html
-- https://github.com/cryptocoinjs/base-x
-- http://base91.sourceforge.net/           # Base91 algorithm, alphabet and reference implementation
+- https://raw.githubusercontent.com/cryptocoinjs/base-x/master/README.md
+- http://base91.sourceforge.net/           # Base91 algorithm reference
 - https://rfc.zeromq.org/spec/32/            # Z85 specification (ZeroMQ Z85 alphabet and encoding)
 - https://en.wikipedia.org/wiki/Base62
-- https://en.wikipedia.org/wiki/Base64
 - https://en.wikipedia.org/wiki/Base91
 - https://en.wikipedia.org/wiki/Ascii85
 - https://www.npmjs.com/package/base-x
@@ -30,9 +30,9 @@ All sources (for reference):
 - https://en.wikipedia.org/wiki/Ascii85
 - https://www.npmjs.com/package/ascii85
 - https://rfc.zeromq.org/spec/32/            # Z85 specification (ZeroMQ Z85 alphabet and encoding)
-- http://base91.sourceforge.net/           # Base91 algorithm, alphabet and reference implementation
+- http://base91.sourceforge.net/           # Base91 algorithm and reference implementation
 - https://en.wikipedia.org/wiki/Base91
-- https://www.rfc-editor.org/rfc/rfc4648.html  # Base16/Base32/Base64 RFC (padding, alphabet variants)
+- https://www.rfc-editor.org/rfc/rfc4648.txt  # Base16/Base32/Base64 RFC (padding, alphabet variants)
 - https://www.rfc-editor.org/rfc/rfc1924.txt    # Compact representation of IPv6 (base85-style example)
 - https://datatracker.ietf.org/doc/html/rfc4122  # UUID format and canonical representation
 - https://en.wikipedia.org/wiki/UUID
