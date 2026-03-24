@@ -2,6 +2,25 @@
 
 Reference material and documentation sources for this project. Prioritised: dense encodings (base62/base85/base91), charset rules, UUID format, and binary/Uint8Array handling.
 
+Curl-prioritised extraction order (top-first):
+
+- https://www.rfc-editor.org/rfc/rfc4648.html  # Base16/Base32/Base64 RFC (padding, alphabet variants)
+- https://datatracker.ietf.org/doc/html/rfc4122  # UUID format and canonical representation
+- https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array
+- https://nodejs.org/api/buffer.html
+- https://github.com/cryptocoinjs/base-x
+- http://base91.sourceforge.net/           # Base91 algorithm, alphabet and reference implementation
+- https://rfc.zeromq.org/spec/32/            # Z85 specification (ZeroMQ Z85 alphabet and encoding)
+- https://en.wikipedia.org/wiki/Base62
+- https://en.wikipedia.org/wiki/Base64
+- https://en.wikipedia.org/wiki/Base91
+- https://en.wikipedia.org/wiki/Ascii85
+- https://www.npmjs.com/package/base-x
+- https://www.npmjs.com/package/base62
+- https://www.npmjs.com/package/ascii85
+
+All sources (for reference):
+
 - https://github.com/cryptocoinjs/base-x
 - https://www.npmjs.com/package/base-x
 - https://en.wikipedia.org/wiki/Base64
