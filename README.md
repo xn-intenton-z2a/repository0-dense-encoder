@@ -1,6 +1,6 @@
 # repo
 
-This repository is powered by [intenti&ouml;n agentic-lib](https://github.com/xn-intenton-z2a/agentic-lib) — autonomous code transformation driven by GitHub Copilot. Write a mission, and the system generates issues, writes code, runs tests, and opens pull requests.
+This repository is powered by [intentiö n agentic-lib](https://github.com/xn-intenton-z2a/agentic-lib) — autonomous code transformation driven by GitHub Copilot. Write a mission, and the system generates issues, writes code, runs tests, and opens pull requests.
 
 ## Getting Started
 
@@ -143,12 +143,14 @@ This project explores binary-to-text encodings. Example: encode the UUID `0181b3
 |----------|--------------:|----------:|-----------------:|
 | hex      | 16 | 4.000 | 0181b3b41f2e7f008c3a5fb3c2d8a1b2 (32) |
 | base64 (no padding) | 64 | 6.000 | (base64 no padding) (22) |
-| base62   | 62 | 5.954 | (example) (22) |
-| base85   | 85 | 6.409 | (example) (20) |
-| base91   | 91 | 6.507 | (example) (20) |
-| densest  | 89 | 6.475 | (example) (20) |
+| base62   | 62 | 5.954 | (example) (21) |
+| base85   | 85 | 6.409 | (example) (19) |
+| base91   | 91 | 6.507 | (example) (19) |
+| densest  | 89 | 6.475 | (example) (19) |
 
 The densest encoding (densest above) produces fewer than 22 characters for a 16-byte UUID.
+
+Clarification: When MISSION.md uses the phrase "strip dashes from a UUID string, encode the 16 bytes, and reverse", the intended meaning in this project is the reverse operation (decode) — the library provides round-trip encode/decode (encodeUUID and decodeUUID) for UUIDs. It does not mean reversing the encoded text string itself.
 
 ## Updating
 
@@ -162,4 +164,4 @@ npx @xn-intenton-z2a/agentic-lib@latest init --purge
 
 - [MISSION.md](MISSION.md) — your project goals
 - [agentic-lib documentation](https://github.com/xn-intenton-z2a/agentic-lib) — full SDK docs
-- [intenti&ouml;n website](https://xn--intenton-z2a.com)
+- [intentiö n website](https://xn--intenton-z2a.com)
