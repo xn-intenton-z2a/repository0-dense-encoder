@@ -8,13 +8,16 @@
   <meta property="og:description" content="An autonomous repository powered by agentic-lib">
   <meta property="og:type" content="website">
   <style>
-    body { font-family: system-ui, -apple-system, sans-serif; max-width: 800px; margin: 0 auto; padding: 2rem; color: #333; }
+    body { font-family: system-ui, -apple-system, sans-serif; max-width: 900px; margin: 0 auto; padding: 2rem; color: #333; }
     h1 { border-bottom: 2px solid #eee; padding-bottom: 0.5rem; }
     a { color: #0366d6; }
     .identity { background: #f6f8fa; padding: 1rem; border-radius: 6px; margin: 1rem 0; font-family: monospace; }
     .identity dt { font-weight: bold; color: #666; }
     .identity dd { margin: 0 0 0.5rem 0; font-size: 1.1rem; }
     #demo-output { background: #1e1e1e; color: #d4d4d4; padding: 1rem; border-radius: 6px; font-family: monospace; white-space: pre-wrap; min-height: 2rem; }
+    table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+    th, td { padding: 0.5rem; border-bottom: 1px solid #eee; text-align: left; }
+    th { background: #fafafa; }
   </style>
 </head>
 <body>
@@ -27,17 +30,49 @@
       <dd id="lib-description">loading...</dd>
     </dl>
   </div>
-  <h2>Output</h2>
+
+  <h2>Encodings</h2>
+  <div id="encodings-list">Loading...</div>
+
+  <h2>UUID sample</h2>
+  <p>Sample UUID: <code id="sample-uuid">00112233-4455-6677-8899-aabbccddeeff</code></p>
   <div id="demo-output">Loading library...</div>
   <h2>About</h2>
   <p>This website uses the library. See <a href="https://github.com/xn-intenton-z2a/repository0">the repository</a> for source code and mission details.</p>
   <script type="module">
     try {
-      const { name, version, description } = await import('./lib.js');
+      const { name, version, description, listEncodings, encodeUuid } = await import('./lib.js');
       document.getElementById('lib-name').textContent = name;
       document.getElementById('lib-version').textContent = version;
       document.getElementById('lib-description').textContent = description || '(no description)';
-      document.getElementById('demo-output').textContent = JSON.stringify({ name, version, description }, null, 2);
+
+      const enc = listEncodings();
+      const encDiv = document.getElementById('encodings-list');
+      const table = document.createElement('table');
+      const thead = document.createElement('thead');
+      thead.innerHTML = '<tr><th>Name</th><th>Bits/char</th><th>Charset size</th><th>UUID length</th></tr>';
+      table.appendChild(thead);
+      const tbody = document.createElement('tbody');
+      const sample = document.getElementById('sample-uuid').textContent;
+      for (const e of enc) {
+        const row = document.createElement('tr');
+        const tdName = document.createElement('td'); tdName.textContent = e.name; row.appendChild(tdName);
+        const tdBits = document.createElement('td'); tdBits.textContent = e.bitsPerChar.toFixed(3); row.appendChild(tdBits);
+        const tdSize = document.createElement('td'); tdSize.textContent = e.charsetSize; row.appendChild(tdSize);
+        let lengthStr = '—';
+        try {
+          const encoded = encodeUuid(e.name, sample);
+          lengthStr = String(encoded.length);
+        } catch (err) {
+          lengthStr = 'error';
+        }
+        const tdLen = document.createElement('td'); tdLen.textContent = lengthStr; row.appendChild(tdLen);
+        tbody.appendChild(row);
+      }
+      table.appendChild(tbody);
+      encDiv.innerHTML = ''; encDiv.appendChild(table);
+
+      document.getElementById('demo-output').textContent = JSON.stringify({ name, version, encodings: enc.map(e => ({ name: e.name, bitsPerChar: Number(e.bitsPerChar.toFixed(3)), charsetSize: e.charsetSize })) }, null, 2);
       document.title = name + ' v' + version;
     } catch (e) {
       document.getElementById('lib-version').textContent = '(error)';
