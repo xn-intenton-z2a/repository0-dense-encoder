@@ -18,3 +18,26 @@ These are illustrative values; the website and unit tests compute actual lengths
 
 ---
 
+```bash
+npx @xn-intenton-z2a/agentic-lib init --purge --mission 7-kyu-understand-fizz-buzz
+```
+
+This resets the repository to a clean state with your chosen mission in `MISSION.md`. The default mission is **fizz-buzz** (7-kyu).
+
+## UUID encoding comparison
+
+This library explores dense binary-to-text encodings. The benchmark is a v7 UUID (16 bytes). Below are typical lengths for a UUID encoded with different encodings implemented in this project.
+
+| Encoding | Charset size | Approx bits/char | UUID length (chars) |
+|---------:|-------------:|-----------------:|--------------------:|
+| hex      | 16           | 4.00             | 32                  |
+| base64 (no padding) | 64 | 6.00 | 22 |
+| base62   | 62           | ~5.95            | 22                  |
+| base85   | 85           | ~6.41            | 20                  |
+| base89 (printable ASCII without ambiguous chars) | 89 | ~6.48 | 20 |
+
+Use the library to compare encodings from code or the demo website.
+
+---
+
+(See `src/lib/main.js` for the implementation of the encoders, `src/web/` for the demo, and `tests/unit/` for unit tests.)

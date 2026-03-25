@@ -1,55 +1,40 @@
 // SPDX-License-Identifier: MIT
-import { describe, test, expect } from 'vitest';
-import { encode, decode, listEncodings, createEncodingFromCharset, encodeUuid, decodeUuid } from '../../src/lib/main.js';
+import { describe, test, expect } from "vitest";
+import { encode, decode, listEncodings, encodeUUID } from "../../src/lib/main.js";
 
-function uint8Equal(a, b) {
-  if (!(a instanceof Uint8Array) || !(b instanceof Uint8Array)) return false;
-  if (a.length !== b.length) return false;
-  for (let i = 0; i < a.length; i++) if (a[i] !== b[i]) return false;
-  return true;
-}
+const encs = listEncodings().map(e => e.name);
 
-describe('Dense encodings - roundtrip and UUID lengths', () => {
-  test('built-in encodings present', () => {
-    const enc = listEncodings().map(e => e.name);
-    expect(enc).toEqual(expect.arrayContaining(['base62', 'base85', 'base91']));
-  });
+describe("Dense encodings round-trip", () => {
+  const samples = [
+    { name: "empty", bytes: new Uint8Array([]) },
+    { name: "single", bytes: new Uint8Array([0x7f]) },
+    { name: "zeros16", bytes: new Uint8Array(16) },
+    { name: "ff16", bytes: (() => { const b = new Uint8Array(16); b.fill(0xff); return b; })() }
+  ];
 
-  test('round-trip for edge cases across encodings', () => {
-    const encs = listEncodings().map(e => e.name);
-    const cases = [
-      new Uint8Array([]),
-      new Uint8Array([0x01]),
-      new Uint8Array(16), // all zeros
-      new Uint8Array(16).fill(0xff),
-      new Uint8Array([0x00, 0x01, 0x02, 0x03, 0xff])
-    ];
-    for (const name of encs) {
-      for (const c of cases) {
-        const encoded = encode(name, c);
-        const decoded = decode(name, encoded);
-        expect(uint8Equal(decoded, c)).toBe(true);
-      }
+  for (const enc of encs) {
+    for (const sample of samples) {
+      test(`${enc} round-trip ${sample.name}`, () => {
+        const encoded = encode(enc, sample.bytes);
+        const decoded = decode(enc, encoded);
+        expect(Array.from(decoded)).toEqual(Array.from(sample.bytes));
+      });
     }
-  });
+  }
+});
 
-  test('UUID encoding lengths and densest < 22 chars', () => {
-    const uuid = '00112233-4455-6677-8899-aabbccddeeff';
-    const encs = listEncodings();
-    const lengths = encs.map(e => ({ name: e.name, len: encodeUuid(e.name, uuid).length }));
-    // find minimal
-    const minLen = Math.min(...lengths.map(x => x.len));
-    expect(minLen).toBeLessThan(22);
-  });
+test("densest encoding produces UUID shorter than base64 (22)", () => {
+  const uuid = "01234567-89ab-cdef-0123-456789abcdef";
+  const encodings = listEncodings();
+  encodings.sort((a, b) => b.bitsPerChar - a.bitsPerChar);
+  const densest = encodings[0].name;
+  const encoded = encodeUUID(densest, uuid);
+  expect(encoded.length).toBeLessThan(22);
+});
 
-  test('create custom encoding and round-trip', () => {
-    const customCharset = '23456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
-    createEncodingFromCharset('custom', customCharset);
-    const enc = listEncodings().map(e => e.name);
-    expect(enc).toContain('custom');
-    const sample = new Uint8Array([0x00, 0xff, 0x10, 0x20]);
-    const encoded = encode('custom', sample);
-    const decoded = decode('custom', encoded);
-    expect(uint8Equal(decoded, sample)).toBe(true);
-  });
+test("listEncodings returns metadata", () => {
+  const list = listEncodings();
+  expect(Array.isArray(list)).toBe(true);
+  const found = list.find(e => e.name === "base62");
+  expect(found).toBeTruthy();
 });

@@ -1,3 +1,3 @@
 // SPDX-License-Identifier: MIT
-// Browser entry point, re-exports from the library.
-export { name, version, description, getIdentity, encode, decode, listEncodings, createEncodingFromCharset, encodeUuid, decodeUuid } from "../lib/main.js";
+// src/web/lib.js — Browser entry point, re-exports from the library.
+export { name, version, description, getIdentity, encode, decode, listEncodings, createEncoding, encodeUUID, decodeUUID } from "../lib/main.js";

@@ -10,45 +10,69 @@ export function getIdentity() {
   return { name, version, description };
 }
 
-export function encode(encodingName, bytes) {
-  if (!encodings.has(encodingName)) throw new Error(`Unknown encoding: ${encodingName}`);
-  const cfg = encodings.get(encodingName);
-  return encodeWithCharset(bytes, cfg.charset);
-}
-
-export function decode(encodingName, str) {
-  if (!encodings.has(encodingName)) throw new Error(`Unknown encoding: ${encodingName}`);
-  const cfg = encodings.get(encodingName);
-  return decodeWithCharset(str, cfg.charset);
-}
-
 export function listEncodings() {
-  return Array.from(encodings.values()).map(e => ({ name: e.name, bitsPerChar: e.bitsPerChar, charsetSize: e.charsetSize }));
+  return Array.from(registry.values()).map(({ name, bitsPerChar, charsetSize }) => ({ name, bitsPerChar, charsetSize }));
 }
 
-export function createEncodingFromCharset(name, charset) {
-  if (typeof charset !== 'string') throw new TypeError('charset must be a string');
-  if (charset.length < 2) throw new TypeError('charset must contain at least 2 characters');
-  // validate printable ASCII range U+0021 (33) .. U+007E (126)
+export function createEncoding(name, charset) {
+  // Validate charset: no control characters, no spaces, and exclude ambiguous characters
+  if (typeof charset !== "string") throw new TypeError("charset must be a string");
+  if (charset.length < 2) throw new TypeError("charset must contain at least 2 characters");
   for (const ch of charset) {
     const code = ch.codePointAt(0);
-    if (!code || code < 33 || code > 126) throw new Error('charset contains non-printable ASCII characters');
-    if (AMBIGUOUS.has(ch)) throw new Error(`charset contains ambiguous character: ${ch}`);
+    if (code < 0x21 || code > 0x7e) throw new TypeError("charset must use printable ASCII characters (U+0021..U+007E)");
+    if (/[\s]/.test(ch)) throw new TypeError("charset must not contain whitespace");
+    if (["0", "O", "1", "l", "I"].includes(ch)) throw new TypeError("charset must not contain visually ambiguous characters (0/O, 1/l/I)");
   }
-  const unique = new Set([...charset]);
-  if (unique.size !== charset.length) throw new Error('charset must contain unique characters');
-  registerEncoding(name, charset);
-  return encodings.get(name);
+  addEncoding(name, charset);
+  return registry.get(name);
 }
 
-export function encodeUuid(encodingName, uuidStr) {
-  const bytes = hexToBytes(uuidStr);
-  if (bytes.length !== 16) throw new Error('UUID must be 16 bytes');
-  return encode(encodingName, bytes);
+export function encode(name, bytes) {
+  if (!(bytes instanceof Uint8Array)) throw new TypeError("bytes must be a Uint8Array");
+  const payload = encodePayloadNoLength(name, bytes);
+  // prefix with length so decoding can restore leading zeros
+  return `${bytes.length}:${payload}`;
 }
 
-export function decodeUuid(encodingName, encoded) {
-  const bytes = decode(encodingName, encoded);
-  if (bytes.length !== 16) throw new Error('Decoded UUID must be 16 bytes');
-  return formatUuidHex(bytesToHex(bytes));
+export function decode(name, encoded) {
+  if (typeof encoded !== "string") throw new TypeError("encoded must be a string");
+  const m = encoded.match(/^(\d+):(.*)$/s);
+  if (!m) {
+    // backward-compat / minimal form: payload only
+    const buf = decodePayloadNoLength(name, encoded);
+    return buf;
+  }
+  const len = Number(m[1]);
+  const payload = m[2] || "";
+  const buf = decodePayloadNoLength(name, payload);
+  // left-pad with zeros to requested length
+  if (buf.length === len) return buf;
+  const out = new Uint8Array(len);
+  // place buf at the end so leading zeros preserved
+  out.set(buf, len - buf.length);
+  return out;
+}
+
+export function encodeUUID(name, uuid) {
+  if (typeof uuid !== "string") throw new TypeError("uuid must be a string");
+  const hex = uuid.replace(/-/g, "").toLowerCase();
+  if (!/^[0-9a-f]{32}$/.test(hex)) throw new TypeError("invalid uuid string");
+  const bytes = new Uint8Array(16);
+  for (let i = 0; i < 16; i++) {
+    bytes[i] = parseInt(hex.slice(i * 2, i * 2 + 2), 16);
+  }
+  const payload = encodePayloadNoLength(name, bytes);
+  return payload.split("").reverse().join("");
+}
+
+export function decodeUUID(name, encoded) {
+  if (typeof encoded !== "string") throw new TypeError("encoded must be a string");
+  const payload = encoded.split("").reverse().join("");
+  const buf = decodePayloadNoLength(name, payload);
+  // left-pad to 16 bytes
+  const out = new Uint8Array(16);
+  out.set(buf, 16 - buf.length);
+  const hex = Array.from(out).map(b => b.toString(16).padStart(2, "0")).join("");
+  return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(16, 20)}-${hex.slice(20)}`;
 }
