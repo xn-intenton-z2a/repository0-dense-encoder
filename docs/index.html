@@ -33,37 +33,12 @@
   <p>This website uses the library. See <a href="https://github.com/xn-intenton-z2a/repository0">the repository</a> for source code and mission details.</p>
   <script type="module">
     try {
-      const lib = await import('./lib.js');
-      const { name, version, description, listEncodings, encodeUUID } = lib;
+      const { name, version, description } = await import('./lib.js');
       document.getElementById('lib-name').textContent = name;
       document.getElementById('lib-version').textContent = version;
       document.getElementById('lib-description').textContent = description || '(no description)';
       document.getElementById('demo-output').textContent = JSON.stringify({ name, version, description }, null, 2);
       document.title = name + ' v' + version;
-
-      // build a small comparison table for a sample v7 UUID
-      const uuid = '0181b3b4-1f2e-7f00-8c3a-5fb3c2d8a1b2';
-      const encs = listEncodings();
-      const table = document.createElement('table');
-      table.id = 'encoding-table';
-      table.style.borderCollapse = 'collapse';
-      table.style.width = '100%';
-      const thead = document.createElement('thead');
-      thead.innerHTML = '<tr><th style="text-align:left">Encoding</th><th>Charset Size</th><th>Bits/char</th><th>UUID (encoded)</th><th>Length</th></tr>';
-      table.appendChild(thead);
-      const tbody = document.createElement('tbody');
-      for (const e of encs) {
-        let encoded = '';
-        try { encoded = encodeUUID(e.name, uuid); } catch (err) { encoded = 'error'; }
-        const tr = document.createElement('tr');
-        tr.innerHTML = `<td>${e.name}</td><td style="text-align:center">${e.charsetSize}</td><td style="text-align:center">${e.bitsPerChar.toFixed(3)}</td><td style="font-family:monospace">${encoded}</td><td style="text-align:center">${encoded.length}</td>`;
-        tbody.appendChild(tr);
-      }
-      table.appendChild(tbody);
-      const h2 = document.createElement('h2');
-      h2.textContent = 'Encoding comparison (UUID)';
-      document.body.appendChild(h2);
-      document.body.appendChild(table);
     } catch (e) {
       document.getElementById('lib-version').textContent = '(error)';
       document.getElementById('lib-description').textContent = e.message;

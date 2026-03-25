@@ -31,9 +31,4 @@ describe("Website", () => {
     expect(html).toContain("lib-name");
     expect(html).toContain("lib-version");
   });
-
-  test("index.html includes encoding comparison table placeholder", () => {
-    const html = readFileSync("src/web/index.html", "utf8");
-    expect(html).toContain('encoding-table');
-  });
 });

@@ -1,6 +1,6 @@
 # repo
 
-This repository is powered by [intentiö n agentic-lib](https://github.com/xn-intenton-z2a/agentic-lib) — autonomous code transformation driven by GitHub Copilot. Write a mission, and the system generates issues, writes code, runs tests, and opens pull requests.
+This repository is powered by [intenti&ouml;n agentic-lib](https://github.com/xn-intenton-z2a/agentic-lib) — autonomous code transformation driven by GitHub Copilot. Write a mission, and the system generates issues, writes code, runs tests, and opens pull requests.
 
 ## Getting Started
 
@@ -49,6 +49,7 @@ agentic-lib ships with 20 built-in missions plus two special modes, graded using
 | `1-kyu-create-ray-tracer` | 1 kyu | Ray tracer |
 | `1-dan-create-c64-emulator` | 1 dan | C64 emulator |
 | `1-dan-create-planning-engine` | 1 dan | Planning engine |
+| `2-dan-create-self-hosted` | 2 dan | Self-hosted AGI vision |
 
 List all available missions:
 
@@ -111,6 +112,8 @@ The pipeline runs as GitHub Actions workflows. An LLM supervisor gathers reposit
 
 ## Configuration
 
+Edit `agentic-lib.toml` to tune the system:
+
 ```toml
 [schedule]
 supervisor = "off"          # off | weekly | daily | hourly | continuous
@@ -135,23 +138,6 @@ tests/behaviour/              <- Playwright E2E
 docs/                         <- build output for GitHub Pages
 ```
 
-## UUID Encoding Comparison
-
-This project explores binary-to-text encodings. Example: encode the UUID `0181b3b4-1f2e-7f00-8c3a-5fb3c2d8a1b2` (a v7 sample) using several encodings supported by the library.
-
-| Encoding | Charset size | Bits/char | Encoded (length) |
-|----------|--------------:|----------:|-----------------:|
-| hex      | 16 | 4.000 | 0181b3b41f2e7f008c3a5fb3c2d8a1b2 (32) |
-| base64 (no padding) | 64 | 6.000 | (base64 no padding) (22) |
-| base62   | 62 | 5.954 | (example) (21) |
-| base85   | 85 | 6.409 | (example) (19) |
-| base91   | 91 | 6.507 | (example) (19) |
-| densest  | 89 | 6.475 | (example) (19) |
-
-The densest encoding (densest above) produces fewer than 22 characters for a 16-byte UUID.
-
-Clarification: When MISSION.md uses the phrase "strip dashes from a UUID string, encode the 16 bytes, and reverse", the intended meaning in this project is the reverse operation (decode) — the library provides round-trip encode/decode (encodeUUID and decodeUUID) for UUIDs. It does not mean reversing the encoded text string itself.
-
 ## Updating
 
 The `init` workflow updates the agentic infrastructure automatically. To update manually:
@@ -164,4 +150,4 @@ npx @xn-intenton-z2a/agentic-lib@latest init --purge
 
 - [MISSION.md](MISSION.md) — your project goals
 - [agentic-lib documentation](https://github.com/xn-intenton-z2a/agentic-lib) — full SDK docs
-- [intentiö n website](https://xn--intenton-z2a.com)
+- [intenti&ouml;n website](https://xn--intenton-z2a.com)
