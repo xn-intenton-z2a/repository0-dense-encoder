@@ -1,20 +1,16 @@
 # UUID_COMPARISON
 
-Purpose
+Status: Completed
 
-Provide a clear, reproducible README section and evidence showing encoded lengths for a v7 UUID across available encodings, so users can compare density and verify the densest encoding beats base64 for UUIDs.
+Summary
 
-Description
+The repository README includes a canonical UUID comparison table and the unit tests verify that the densest builtin encoding produces a shorter encoded length for a 16-byte UUID than base64. The website also renders a comparison table per merged issues.
 
-Update the project README with a small table that shows, for a canonical 16-byte UUID input, the encoded length produced by each supported encoding and the bits per character metric. The feature spec documents how to reproduce the table programmatically using listEncodings and a single sample UUID value.
+Evidence
 
-Acceptance criteria
+- README.md contains a "UUID encoding comparison" table with example lengths for hex, base64, base62, base85 and base91.
+- tests/unit/encodings.test.js contains assertions that validate UUID encode/decode behaviour and length expectations.
 
-- README includes a table with columns: Encoding, Charset size, Bits per char, Encoded length for 16-byte UUID
-- The table includes at least base62, base85, base91 and the densest custom encoding
-- README contains one paragraph describing how to reproduce the measurements using the library API (listEncodings and encode)
-- The table demonstrates that the densest encoding produces an encoded length shorter than base64 (less than 22 characters) for a 16-byte UUID
+Action
 
-Notes
-
-This is a documentation feature; no behaviour change is required. Keep reproducibility instructions minimal and actionable.
+This feature is complete and is retained as a completed record; no further work unless new encodings are added.
